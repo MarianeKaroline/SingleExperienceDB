@@ -9,7 +9,7 @@ using System.Text;
 
 namespace SingleExperience.Entities.DB
 {
-    class EmployeeDB : EnjoyerDB
+    public class EmployeeDB : EnjoyerDB
     {
         private string pathAccess = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\AccessEmployee.csv";
 

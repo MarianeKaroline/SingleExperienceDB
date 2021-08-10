@@ -188,19 +188,19 @@ namespace SingleExperience.Views
                     ListProducts(parameters);
                     break;
                 case 1:
-                    products.Category(Convert.ToInt32(CategoryEnum.Acessorio), parameters);
+                    products.Category(CategoryEnum.Acessorio, parameters);
                     break;
                 case 2:
-                    products.Category(Convert.ToInt32(CategoryEnum.Celular), parameters);
+                    products.Category(CategoryEnum.Celular, parameters);
                     break;
                 case 3:
-                    products.Category(Convert.ToInt32(CategoryEnum.Computador), parameters);
+                    products.Category(CategoryEnum.Computador, parameters);
                     break;
                 case 4:
-                    products.Category(Convert.ToInt32(CategoryEnum.Notebook), parameters);
+                    products.Category(CategoryEnum.Notebook, parameters);
                     break;
                 case 5:
-                    products.Category(Convert.ToInt32(CategoryEnum.Tablets), parameters);
+                    products.Category(CategoryEnum.Tablets, parameters);
                     break;
                 case 6:
                     Console.Clear();

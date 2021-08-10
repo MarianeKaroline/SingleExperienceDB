@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SingleExperience.Services.ClientServices.Models
 {
-    class ShowAddressModel
+    public class ShowAddressModel
     {
         public string ClientName { get; set; }
         public string ClientPhone { get; set; }

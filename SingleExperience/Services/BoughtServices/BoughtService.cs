@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace SingleExperience.Services.BoughtServices
 {
-    class BoughtService
+    public class BoughtService
     {
         private BoughtDB boughtDB = new BoughtDB();
         private CartDB cartDB = new CartDB();
@@ -45,7 +45,7 @@ namespace SingleExperience.Services.BoughtServices
                 boughtModel.BoughtId = i.BoughtId;
                 boughtModel.paymentMethod = (PaymentEnum)i.PaymentEnum;
 
-                if (i.PaymentEnum == Convert.ToInt32(PaymentEnum.CreditCard))
+                if (i.PaymentEnum == PaymentEnum.CreditCard)
                 {
                     card
                     .Where(j => j.CardNumber.ToString().Contains(i.CodeBought))
@@ -55,7 +55,7 @@ namespace SingleExperience.Services.BoughtServices
                         boughtModel.NumberCard = k.CardNumber.ToString();
                     });
                 }
-                else if (i.PaymentEnum == Convert.ToInt32(PaymentEnum.BankSlip))
+                else if (i.PaymentEnum == PaymentEnum.BankSlip)
                 {
                     boughtModel.Code = i.CodeBought;
                 }

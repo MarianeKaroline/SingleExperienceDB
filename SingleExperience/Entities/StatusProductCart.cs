@@ -2,7 +2,7 @@
 
 namespace SingleExperience.Entities
 {
-    class StatusProductCart
+    public class StatusProductCart
     {
         [Key]
         public int StatusId { get; set; }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SingleExperience.Services.CartServices.Models
 {
-    class SessionModel
+    public class SessionModel
     {
         public int CountProduct { get; set; }
         public string Session { get; set; }

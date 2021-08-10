@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SingleExperience.Entities
 {
-    class Cart
+    public class Cart
     {
         [Key]
         public int CartId { get; set; }

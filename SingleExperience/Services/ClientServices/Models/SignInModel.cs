@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SingleExperience.Services.ClientServices.Models
 {
-    class SignInModel
+    public class SignInModel
     {
         public string Email { get; set; }
         public string Password { get; set; }

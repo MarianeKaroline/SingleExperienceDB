@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using SingleExperience.Services.BoughtServices.Models;
 using SingleExperience.Services.ProductServices.Models;
+using SingleExperience.Enums;
 
 namespace SingleExperience.Services.ProductServices
 {
-    class ProductService
+    public class ProductService
     {
         private ProductDB productDB = new ProductDB();
         private ProductDB product = new ProductDB();
@@ -45,7 +46,7 @@ namespace SingleExperience.Services.ProductServices
         }
 
         //Listar Produtos Categoria
-        public List<CategoryModel> ListProductCategory(int categoryId)
+        public List<CategoryModel> ListProductCategory(CategoryEnum categoryId)
         {
             var productCategory = new List<CategoryModel>();
 

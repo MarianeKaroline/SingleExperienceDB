@@ -16,18 +16,18 @@ namespace SingleExperience.Views
         private ProductService productService = new ProductService();
 
         //Chama ListaProdutos pela Categoria
-        public void Category(int id, SessionModel parameters)
+        public void Category(CategoryEnum id, SessionModel parameters)
         {
             Console.Clear();
-            var category = (CategoryEnum)id;
-            Console.WriteLine($"\nInício > Pesquisa > {category}\n");
+            Console.WriteLine($"\nInício > Pesquisa > {id}\n");
+            var categoryId = Convert.ToInt32(id);
 
             ListProducts(id);
             Menu(parameters, id);
         }
 
         //Menu dos Produtos
-        public void Menu(SessionModel parameters, int id)
+        public void Menu(SessionModel parameters, CategoryEnum id)
         {
             ClientSelectedProductView selectedProduct = new ClientSelectedProductView();
             ClientSignInView signIn = new ClientSignInView();
@@ -119,7 +119,7 @@ namespace SingleExperience.Views
 
         }
         //Listar Produtos selecionado
-        public void ListProducts(int categoryId)
+        public void ListProducts(CategoryEnum categoryId)
         {
             var itemCategory = productService.ListProductCategory(categoryId);
             var j = 41;

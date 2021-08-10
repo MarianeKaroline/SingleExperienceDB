@@ -1,4 +1,5 @@
 ﻿using SingleExperience.Entities.DB;
+using SingleExperience.Enums;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.EmployeeServices;
 using SingleExperience.Services.ProductServices;
@@ -212,7 +213,7 @@ namespace SingleExperience.Views
                 try
                 {
                     Console.Write("Categoria Id: ");
-                    newProduct.CategoryId = int.Parse(Console.ReadLine());
+                    newProduct.CategoryId = (CategoryEnum)int.Parse(Console.ReadLine());
                     validate = false;
                 }
                 catch (Exception)

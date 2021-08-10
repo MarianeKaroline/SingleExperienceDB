@@ -1,9 +1,10 @@
-﻿using System;
+﻿using SingleExperience.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace SingleExperience.Services.CartServices.Models
 {
-    class PreviewBoughtModel
+    public class PreviewBoughtModel
     {
         public string FullName { get; set; }
         public string Street { get; set; }
@@ -15,7 +16,7 @@ namespace SingleExperience.Services.CartServices.Models
         public string NumberCard { get; set; }
         public string Code { get; set; }
         public string Pix { get; set; }
-        public Enum Method { get; set; }
+        public PaymentEnum Method { get; set; }
         public List<ProductCartModel> Itens { get; set; }
     }
 }

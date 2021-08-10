@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SingleExperience.Services.CartServices.Models
 {
-    class BuyModel
+    public class BuyModel
     {
         public string Session { get; set; }
         public PaymentEnum Method { get; set; }

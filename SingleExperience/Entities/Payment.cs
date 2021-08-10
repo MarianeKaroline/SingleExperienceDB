@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SingleExperience.Entities
 {
-    class Payment
+    public class Payment
     {
         [Key]
         public int PaymentId { get; set; }

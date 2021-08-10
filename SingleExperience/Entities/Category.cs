@@ -2,7 +2,7 @@
 
 namespace SingleExperience.Entities
 {
-    class Category
+    public class Category
     {
         [Key]
         public int CategoryId { get; set; }

@@ -9,10 +9,18 @@ using System.Text;
 
 namespace SingleExperience.Services.CartServices
 {
-    class CartService
+    public class CartService
     {
-        private ProductDB productDB = new ProductDB();
-        private CartDB cartDB = new CartDB();
+        protected readonly SingleExperience.Context.SingleExperience context;
+
+        public CartService(SingleExperience.Context.SingleExperience context)
+        {
+            this.context = context;
+        }
+
+
+        ProductDB productDB = new ProductDB();
+        CartDB cartDB = new CartDB();
 
         //Listar produtos no carrinho
         public List<ProductCartModel> ItemCart(SessionModel parameters, StatusProductEnum status)
@@ -27,7 +35,7 @@ namespace SingleExperience.Services.CartServices
                 try
                 {
                     prod = itensCart
-                        .Where(i => i.StatusProductEnum == Convert.ToInt32(status))
+                        .Where(i => i.StatusProductEnum == status)
                         .Select(j => new ProductCartModel()
                         {
                             ProductId = j.ProductId,
@@ -48,7 +56,7 @@ namespace SingleExperience.Services.CartServices
             else
             {
                 prod = parameters.CartMemory
-                        .Where(i => i.StatusProductEnum == Convert.ToInt32(status))
+                        .Where(i => i.StatusProductEnum == status)
                         .Select(j => new ProductCartModel()
                         {
                             ProductId = j.ProductId,
@@ -69,10 +77,10 @@ namespace SingleExperience.Services.CartServices
             if (parameters.Session.Length == 11)
             {
                 total.TotalAmount = itens
-                    .Where(item => item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
+                    .Where(item => item.StatusId == StatusProductEnum.Ativo)
                     .Sum(item => item.Amount);
                 total.TotalPrice = itens
-                    .Where(item => item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
+                    .Where(item => item.StatusId == StatusProductEnum.Ativo)
                     .Sum(item => item.Price * item.Amount);
             }
             else

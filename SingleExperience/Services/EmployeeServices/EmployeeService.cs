@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace SingleExperience.Services.EmployeeServices
 {
-    class EmployeeService : EnjoyerDB
+    public class EmployeeService : EnjoyerDB
     {
         private BoughtDB boughtDB = new BoughtDB();
         private CartDB cartDB = new CartDB();
@@ -45,7 +45,7 @@ namespace SingleExperience.Services.EmployeeServices
                 boughtModel.BoughtId = i.BoughtId;
                 boughtModel.paymentMethod = (PaymentEnum)i.PaymentEnum;
 
-                if (i.PaymentEnum == Convert.ToInt32(PaymentEnum.CreditCard))
+                if (i.PaymentEnum == PaymentEnum.CreditCard)
                 {
                     card
                     .Where(j => j.CardNumber.ToString().Contains(i.CodeBought))
@@ -55,7 +55,7 @@ namespace SingleExperience.Services.EmployeeServices
                         boughtModel.NumberCard = k.CardNumber.ToString();
                     });
                 }
-                else if (i.PaymentEnum == Convert.ToInt32(PaymentEnum.BankSlip))
+                else if (i.PaymentEnum == PaymentEnum.BankSlip)
                 {
                     boughtModel.Code = i.CodeBought;
                 }
@@ -90,7 +90,7 @@ namespace SingleExperience.Services.EmployeeServices
 
         public List<BoughtModel> BoughtPendent(StatusBoughtEnum status)
         {
-            return Bought().Where(i => i.StatusId == Convert.ToInt32(status)).ToList();
+            return Bought().Where(i => i.StatusId == status).ToList();
         }
 
         public List<RegiteredModel> listEmployee()

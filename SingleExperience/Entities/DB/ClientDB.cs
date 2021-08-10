@@ -9,7 +9,7 @@ using System.Text;
 
 namespace SingleExperience.Entities.DB
 {
-    class ClientDB : EmployeeDB
+    public class ClientDB : EmployeeDB
     {
         private string pathAddress = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Address.csv";
         private string pathCard = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Card.csv";

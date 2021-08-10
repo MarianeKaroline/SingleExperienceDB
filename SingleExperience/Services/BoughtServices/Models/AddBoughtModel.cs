@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SingleExperience.Services.BoughtServices.Models
 {
-    class AddBoughtModel
+    public class AddBoughtModel
     {
         public SessionModel Session { get; set; }
         public List<BuyProductModel> BuyProducts { get; set; }

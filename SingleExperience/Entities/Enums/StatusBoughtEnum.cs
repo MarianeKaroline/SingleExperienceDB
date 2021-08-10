@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SingleExperience.Entities.Enums
 {
-    enum StatusBoughtEnum
+    public enum StatusBoughtEnum
     {
         ConfirmacaoPendente = 1,
         PagamentoPendente = 2,

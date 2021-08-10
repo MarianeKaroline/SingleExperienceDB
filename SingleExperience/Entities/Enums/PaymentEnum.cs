@@ -1,6 +1,6 @@
 ﻿namespace SingleExperience.Enums
 {
-    enum PaymentEnum
+    public enum PaymentEnum
     {
         CreditCard = 1,
         BankSlip = 2,

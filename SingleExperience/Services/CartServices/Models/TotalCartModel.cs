@@ -1,6 +1,6 @@
 ﻿namespace SingleExperience.Services.CartServices.Models
 {
-    class TotalCartModel
+    public class TotalCartModel
     {
         public double TotalPrice { get; set; }
         public int TotalAmount { get; set; }

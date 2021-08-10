@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SingleExperience.Services.ClientServices.Models
 {
-    class CardModel
+    public class CardModel
     {
         public long CardNumber { get; set; }
         public string Name { get; set; }

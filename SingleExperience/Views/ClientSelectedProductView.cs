@@ -111,7 +111,7 @@ namespace SingleExperience.Views
                     cartModel.UserId = parameters.Session;
                     cartModel.Name = list.Name;
                     cartModel.CategoryId = list.CategoryId;
-                    cartModel.StatusId = Convert.ToInt32(StatusProductEnum.Ativo);
+                    cartModel.StatusId = StatusProductEnum.Ativo;
                     cartModel.Price = list.Price;
 
                     if (parameters.Session.Length < 11)

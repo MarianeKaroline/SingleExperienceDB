@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SingleExperience.Services.ClientServices
 {
-    class ClientService : EnjoyerDB
+    public class ClientService : EnjoyerDB
     {
 
         private ClientDB clientDB = new ClientDB();               

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SingleExperience.Services.ClientServices.Models
 {
-    class AddressModel
+    public class AddressModel
     {
         public string Cep { get; set; }
         public string Street { get; set; }

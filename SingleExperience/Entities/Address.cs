@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SingleExperience.Entities
 {
-    class Address
+    public class Address
     {
         [Key]
         public int AddressId { get; set; }

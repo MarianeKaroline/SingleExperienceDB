@@ -2,7 +2,7 @@
 
 namespace SingleExperience.Services.CartServices.Models
 {
-    class BuyProductModel
+    public class BuyProductModel
     {
         public int ProductId { get; set; }
         public int Amount { get; set; }

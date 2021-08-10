@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SingleExperience.Entities
 {
-    class ProductBought
+    public class ProductBought
     {
         [Key]
         public int ProductBoughtId { get; set; }

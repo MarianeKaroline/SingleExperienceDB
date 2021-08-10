@@ -1,6 +1,6 @@
 ﻿namespace SingleExperience.Enums
 {
-    enum StatusProductEnum
+    public enum StatusProductEnum
     {
         Inativo = 1,
         Ativo = 2,

@@ -10,7 +10,7 @@ using System.Text;
 
 namespace SingleExperience.Entities.DB
 {
-    class CartDB
+    public class CartDB
     {
         private string path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Cart.csv";
         private string pathItens = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\ItensCart.csv";
@@ -56,7 +56,7 @@ namespace SingleExperience.Entities.DB
                     ProductId = int.Parse(i.Split(',')[1]),
                     CartId = int.Parse(i.Split(',')[2]),
                     Amount = int.Parse(i.Split(',')[3]),
-                    StatusProductEnum = int.Parse(i.Split(',')[4]),
+                    StatusProductEnum = (StatusProductEnum)int.Parse(i.Split(',')[4]),
                 })
                 .Where(i => i.CartId == cartId)
                 .ToList();
@@ -121,7 +121,7 @@ namespace SingleExperience.Entities.DB
                 {
                     listItensCart.ForEach(j =>
                     {
-                        if (j.ProductId == cartModel.ProductId && j.StatusProductEnum != Convert.ToInt32(StatusProductEnum.Ativo))
+                        if (j.ProductId == cartModel.ProductId && j.StatusProductEnum != StatusProductEnum.Ativo)
                         {
                             EditStatusProduct(cartModel.ProductId, cartModel.UserId, StatusProductEnum.Ativo);
                             exist = true;
@@ -282,7 +282,7 @@ namespace SingleExperience.Entities.DB
                 {
                     parameters.CartMemory.ForEach(i =>
                     {
-                        if (j.ProductId == i.ProductId && j.StatusProductEnum != Convert.ToInt32(StatusProductEnum.Ativo))
+                        if (j.ProductId == i.ProductId && j.StatusProductEnum != StatusProductEnum.Ativo)
                         {
                             EditStatusProduct(j.ProductId, parameters.Session, StatusProductEnum.Ativo);
                             EditAmount(j.ProductId, parameters.Session, i.Amount);

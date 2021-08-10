@@ -1,6 +1,6 @@
 ﻿namespace SingleExperience.Enums
 {
-    enum CategoryEnum
+    public enum CategoryEnum
     {
         Acessorio = 1,
         Celular = 2,

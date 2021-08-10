@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SingleExperience.Entities
 {
-    class CreditCard
+    public class CreditCard
     {
         [Key]
         public int CardId { get; set; }

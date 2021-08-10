@@ -8,7 +8,7 @@ using System.Text;
 
 namespace SingleExperience.Entities
 {
-    class Bought
+    public class Bought
     {
         [Key]
         public int BoughtId { get; set; }        

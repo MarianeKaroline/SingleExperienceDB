@@ -1,5 +1,4 @@
-﻿using SingleExperience.Entities;
-using SingleExperience.Entities.Enums;
+﻿using SingleExperience.Entities.Enums;
 using SingleExperience.Enums;
 using SingleExperience.Services.BoughtServices.Models;
 using SingleExperience.Services.CartServices.Models;
@@ -12,7 +11,7 @@ using System.Text;
 
 namespace SingleExperience.Entities.DB
 {
-    class BoughtDB
+    public class BoughtDB
     {
         private string path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Bought.csv";
         private string pathProducts = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\ProductBought.csv";
@@ -38,10 +37,10 @@ namespace SingleExperience.Entities.DB
                     BoughtId = int.Parse(p.Split(',')[0]),
                     TotalPrice = double.Parse(p.Split(',')[1]),
                     AddressId = int.Parse(p.Split(',')[2]),
-                    PaymentEnum = int.Parse(p.Split(',')[3]),
+                    PaymentEnum = (PaymentEnum)int.Parse(p.Split(',')[3]),
                     CodeBought = p.Split(',')[4],
                     Cpf = p.Split(',')[5],
-                    StatusBoughtEnum = int.Parse(p.Split(',')[6]),
+                    StatusBoughtEnum = (StatusBoughtEnum)int.Parse(p.Split(',')[6]),
                     DateBought = DateTime.Parse(p.Split(',')[7])
                 })
                 .ToList();
@@ -60,10 +59,10 @@ namespace SingleExperience.Entities.DB
                     BoughtId = int.Parse(p.Split(',')[0]),
                     TotalPrice = double.Parse(p.Split(',')[1]),
                     AddressId = int.Parse(p.Split(',')[2]),
-                    PaymentEnum = int.Parse(p.Split(',')[3]),
+                    PaymentEnum = (PaymentEnum)int.Parse(p.Split(',')[3]),
                     CodeBought = p.Split(',')[4],
                     Cpf = p.Split(',')[5],
-                    StatusBoughtEnum = int.Parse(p.Split(',')[6]),
+                    StatusBoughtEnum = (StatusBoughtEnum)int.Parse(p.Split(',')[6]),
                     DateBought = DateTime.Parse(p.Split(',')[7])
                 })
                 .Where(p => p.Cpf == userId)
@@ -158,7 +157,7 @@ namespace SingleExperience.Entities.DB
                 {
                     listItens.Add(cartDB.ListItens(getCart.CartId)
                         .Where(i =>
-                            i.StatusProductEnum == Convert.ToInt32(StatusProductEnum.Comprado) &&
+                            i.StatusProductEnum == StatusProductEnum.Comprado &&
                             i.ProductId == j.ProductId)
                         .FirstOrDefault());
                 });

@@ -2,7 +2,7 @@
 
 namespace SingleExperience.Entities
 {
-    class StatusBought
+    public class StatusBought
     {
         [Key]
         public int StatusId { get; set; }

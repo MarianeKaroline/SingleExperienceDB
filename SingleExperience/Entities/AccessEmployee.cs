@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SingleExperience.Entities
 {
-    class AccessEmployee
+    public class AccessEmployee
     {
         [Key]
         public string Cpf { get; set; }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SingleExperience.Services.ClientServices.Models
 {
-    class SignUpModel
+    public class SignUpModel
     {
         public string Cpf { get; set; }
         public string FullName { get; set; }

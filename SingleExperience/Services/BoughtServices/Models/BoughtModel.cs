@@ -1,12 +1,11 @@
-﻿using SingleExperience.Enums;
-using SingleExperience.Services.CartServices.Models;
+﻿using SingleExperience.Entities.Enums;
+using SingleExperience.Enums;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SingleExperience.Services.BoughtServices.Models
 {
-    class BoughtModel
+    public class BoughtModel
     {
         public int BoughtId { get; set; }
         public string ClientName { get; set; }
@@ -21,7 +20,7 @@ namespace SingleExperience.Services.BoughtServices.Models
         public string Pix { get; set; }
         public List<ProductBoughtModel> Itens { get; set; }
         public double TotalPrice { get; set; }
-        public int StatusId { get; set; }
+        public StatusBoughtEnum StatusId { get; set; }
         public DateTime DateBought { get; set; }
     }
 }

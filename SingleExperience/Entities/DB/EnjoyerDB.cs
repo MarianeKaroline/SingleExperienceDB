@@ -11,7 +11,7 @@ using System.Text;
 
 namespace SingleExperience.Entities.DB
 {
-    class EnjoyerDB
+    public class EnjoyerDB
     {
         private string[] listEnjoyer = File.ReadAllLines(@"C:\Users\mariane.santos\Desktop\Backend\SingleExperience\Database\Enjoyer.csv", Encoding.UTF8);
 

@@ -35,7 +35,7 @@ namespace SingleExperience.Views
             {
                 var product = productDB.ListProducts().FirstOrDefault(i => i.ProductId == p.ProductId);
 
-                if (p.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
+                if (p.StatusId == StatusProductEnum.Ativo)
                 {
                     Console.WriteLine($"+{new string('-', j)}+");
                     Console.WriteLine($"|#{p.ProductId}{new string(' ', j - 1 - p.ProductId.ToString().Length)}|");
@@ -138,7 +138,7 @@ namespace SingleExperience.Views
                             cartModel.UserId = parameters.Session;
                             cartModel.Name = p.Name;
                             cartModel.CategoryId = p.CategoryId;
-                            cartModel.StatusId = Convert.ToInt32(StatusProductEnum.Ativo);
+                            cartModel.StatusId = StatusProductEnum.Ativo;
                             cartModel.Price = p.Price;
 
                             if (parameters.Session.Length < 11)

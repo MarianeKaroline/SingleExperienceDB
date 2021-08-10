@@ -3,7 +3,7 @@ using SingleExperience.Entities;
 
 namespace SingleExperience.Context
 {
-    class SingleExperience : DbContext
+    public class SingleExperience : DbContext
     {
         public DbSet<User> Enjoyer { get; set; }
         public DbSet<AccessEmployee> AccessEmployee { get; set; }
