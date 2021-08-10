@@ -1,0 +1,131 @@
+﻿using SingleExperience.Services.ProductServices.Model;
+using SingleExperience.Entities.DB;
+using SingleExperience.Entities;
+using System.Collections.Generic;
+using System.Linq;
+using SingleExperience.Services.BoughtServices.Models;
+using SingleExperience.Services.ProductServices.Models;
+
+namespace SingleExperience.Services.ProductServices
+{
+    class ProductService
+    {
+        private ProductDB productDB = new ProductDB();
+        private ProductDB product = new ProductDB();
+        private List<Product> list;
+
+        public ProductService()
+        {
+            list = product.ListProducts();
+        }
+
+        //Listar Produtos Home
+        public List<BestSellingModel> ListProducts()
+        {
+            var bestSellingModel = new List<BestSellingModel>();
+
+            list
+                .Where(p => p.Available == true)
+                .OrderByDescending(p => p.Ranking)
+                .Take(5)
+                .ToList()
+                .ForEach(p =>
+                {
+                    var selling = new BestSellingModel();
+                    selling.ProductId = p.ProductId;
+                    selling.Name = p.Name;
+                    selling.Price = p.Price;
+                    selling.Ranking = p.Ranking;
+                    selling.Available = p.Available;
+
+                    bestSellingModel.Add(selling);
+                });
+
+            return bestSellingModel;
+        }
+
+        //Listar Produtos Categoria
+        public List<CategoryModel> ListProductCategory(int categoryId)
+        {
+            var productCategory = new List<CategoryModel>();
+
+            productCategory = list
+                .Where(p => p.Available == true && p.CategoryEnum == categoryId)
+                .Select(i => new CategoryModel()
+                {
+                    ProductId = i.ProductId,
+                    Name = i.Name,
+                    Price = i.Price,
+                    CategoryId = i.CategoryEnum,
+                    Available = i.Available
+                })
+                .ToList();                
+
+            return productCategory;
+        }
+
+        //Listar Produto Selecionado
+        public ProductSelectedModel SelectedProduct(int productId)
+        {
+            var selectedModels = new ProductSelectedModel();
+
+            selectedModels = list
+                .Where(p => p.Available == true && p.ProductId == productId)
+                .Select(i => new ProductSelectedModel()
+                {
+                    Rating = i.Rating,
+                    CategoryId = i.CategoryEnum,
+                    ProductId = i.ProductId,
+                    Name = i.Name,
+                    Price = i.Price,
+                    Amount = i.Amount,
+                    Detail = i.Detail
+                })
+                .FirstOrDefault();                
+
+            return selectedModels;
+        }
+
+        //Se existe o produto com o id que o usuário digitou
+        public bool HasProduct(int code)
+        {
+            return list.Single(i => i.ProductId == code) != null;
+        }
+
+        //Diminui a quantidade do estoque quando a compra é confirmada pelo funcionário
+        public bool Confirm(List<ProductBoughtModel> list)
+        {
+            var confirmed = false;
+
+            list.ForEach(i =>
+            {
+                confirmed = productDB.EditAmount(i.ProductId, i.Amount);
+            });
+
+            return confirmed;
+        }
+
+        public List<ListProductsModel> ListAllProducts()
+        {
+            var productsModel = new List<ListProductsModel>();
+
+            list
+                .ToList()
+                .ForEach(p =>
+                {
+                    var products = new ListProductsModel();
+                    products.ProductId = p.ProductId;
+                    products.Name = p.Name;
+                    products.Price = p.Price;
+                    products.Amount = p.Amount;
+                    products.CategoryId = p.CategoryEnum;
+                    products.Ranking = p.Ranking;
+                    products.Available = p.Available;
+
+                    productsModel.Add(products);
+                });
+
+            return productsModel;
+        }
+    }
+}
