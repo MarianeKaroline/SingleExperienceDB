@@ -2,6 +2,8 @@
 using SingleExperience.Entities.DB;
 using SingleExperience.Enums;
 using SingleExperience.Services.BoughtServices.Models;
+using SingleExperience.Services.CartServices;
+using SingleExperience.Services.ProductServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +12,18 @@ namespace SingleExperience.Services.BoughtServices
 {
     public class BoughtService
     {
+        protected readonly SingleExperience.Context.SingleExperience context;
+        private ProductService productService;
+        private CartService cartService;
+
+        public BoughtService(SingleExperience.Context.SingleExperience context)
+        {
+            this.context = context;
+            productService = new ProductService(context);
+            cartService = new CartService(context);
+        }
+                 
         private BoughtDB boughtDB = new BoughtDB();
-        private CartDB cartDB = new CartDB();
         private ClientDB clientDB = new ClientDB();
 
         //Listar as compras do cliente
@@ -20,9 +32,8 @@ namespace SingleExperience.Services.BoughtServices
             var client = clientDB.GetEnjoyer(session);
             var address = clientDB.ListAddress(session);
             var card = clientDB.ListCard(session);
-            var cart = cartDB.GetCart(session);
-            var productDB = new ProductDB();
-            var itens = cartDB.ListItens(cart.CartId);
+            var cart = cartService.GetCart(session);
+            var itens = cartService.ListItens(cart.CartId);
             var listProducts = new List<BoughtModel>();
 
             var listBought = boughtDB.List(session);
@@ -75,9 +86,9 @@ namespace SingleExperience.Services.BoughtServices
                     var product = new ProductBoughtModel();
 
                     product.ProductId = j.ProductId;
-                    product.ProductName = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Name;
+                    product.ProductName = productService.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Name;
                     product.Amount = j.Amount;
-                    product.Price = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Price;
+                    product.Price = productService.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Price;
 
                     boughtModel.Itens.Add(product);
                 });

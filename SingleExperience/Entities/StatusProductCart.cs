@@ -1,11 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SingleExperience.Enums;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SingleExperience.Entities
 {
     public class StatusProductCart
     {
         [Key]
-        public int StatusId { get; set; }
+        [Column("StatusProductId")]
+        public StatusProductEnum StatusProductEnum { get; set; }
         public string Description { get; set; }
     }
 }

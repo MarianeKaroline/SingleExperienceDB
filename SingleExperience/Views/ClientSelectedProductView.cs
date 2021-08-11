@@ -16,9 +16,9 @@ namespace SingleExperience.Views
 {
     class ClientSelectedProductView
     {
-        private ProductService productService = new ProductService();
-        private CartService cartService = new CartService();
-        private CartDB cartDB = new CartDB();
+        private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
+        private ProductService productService = new ProductService(context);
+        private CartService cartService = new CartService(context);
         private ClientService clientService = new ClientService();
 
         //Listar Produtos
@@ -107,6 +107,7 @@ namespace SingleExperience.Views
                     break;
                 case 3:
                     CartModel cartModel = new CartModel();
+
                     cartModel.ProductId = list.ProductId;
                     cartModel.UserId = parameters.Session;
                     cartModel.Name = list.Name;
@@ -117,11 +118,11 @@ namespace SingleExperience.Views
                     if (parameters.Session.Length < 11)
                     {
 
-                        parameters.CartMemory = cartDB.AddItensMemory(cartModel, parameters.CartMemory);
+                        parameters.CartMemory = cartService.AddItensMemory(cartModel, parameters.CartMemory);
                     }
                     else
                     {
-                        cartDB.AddItemCart(parameters, cartModel);
+                        cartService.AddItemCart(parameters, cartModel);
 
                         parameters.CartMemory = new List<ProductCart>();
                     }

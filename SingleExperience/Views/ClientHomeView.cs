@@ -13,12 +13,12 @@ namespace SingleExperience.Views
 {
     class ClientHomeView
     {
+        static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         EmployeeService employee = new EmployeeService();
         ClientService client = new ClientService();
-        BoughtService boughtService = new BoughtService();
-        ProductService productService = new ProductService();
-        ProductService product = new ProductService();
-        CartService cartService = new CartService();
+        BoughtService boughtService = new BoughtService(context);
+        ProductService productService = new ProductService(context);
+        CartService cartService = new CartService(context);
         ClientDB clientDB = new ClientDB();
 
         //Tela inicial
@@ -123,7 +123,7 @@ namespace SingleExperience.Views
                         try
                         {
                             int code = int.Parse(Console.ReadLine());
-                            if (product.HasProduct(code))
+                            if (productService.HasProduct(code))
                             {
                                 selectedProduct.SelectedProduct(code, parameters);
                             }
@@ -241,9 +241,9 @@ namespace SingleExperience.Views
             products.ForEach(p =>
             {
                 Console.WriteLine($"+{new string('-', j)}+");
-                Console.WriteLine($"|#{p.ProductId}{new string(' ', j - 1 - p.ProductId.ToString().Length)}|");
+                Console.WriteLine($"| #{p.ProductId}{new string(' ', j - 2 - p.ProductId.ToString().Length)}|");
                 Console.WriteLine($"| {p.Name}{new string(' ', j - 1 - p.Name.ToString().Length)}|");
-                Console.WriteLine($"| R${p.Price.ToString("F2", CultureInfo.CurrentCulture)}{new string(' ', j - 6 - p.Price.ToString().Length)}|");
+                Console.WriteLine($"| R${p.Price.ToString("F2")}{new string(' ', j - 6 - p.Price.ToString().Length)}|");
                 Console.WriteLine($"+{new string('-', j)}+");
             });
             Menu(parameters);

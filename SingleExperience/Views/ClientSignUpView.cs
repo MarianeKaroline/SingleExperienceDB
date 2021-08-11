@@ -14,17 +14,17 @@ namespace SingleExperience.Views
 {
     class ClientSignUpView
     {
-
+        static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private SignUpModel clientModel = new SignUpModel();
-        private CartDB cartDB = new CartDB();
+        private CartService cartService = new CartService(context);
         private ClientDB clientDB = new ClientDB();
-        private CartService cartService = new CartService();
         private ClientService clientService = new ClientService();
         private SignUpModel employee = new SignUpModel();
         private EmployeeDB employeeDB = new EmployeeDB();
 
 
         public string password = null;
+
         public void SignUp(SessionModel parameters, bool home)
         {
             ClientSendingAddressView sendingAddress = new ClientSendingAddressView();
@@ -140,7 +140,7 @@ namespace SingleExperience.Views
             if (signUp)
             {
                 parameters.Session = clientModel.Cpf;
-                cartDB.PassItens(parameters);
+                cartService.PassItens(parameters);
                 parameters.CartMemory = new List<ProductCart>();
                 parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                 if (home)

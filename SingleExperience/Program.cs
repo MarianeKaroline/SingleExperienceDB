@@ -7,20 +7,22 @@ namespace SingleExperience
 {
     class Program
     {
+        private static Context.SingleExperience context;
+
         static void Main(string[] args)
         {
+            SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
             //Carrinho memória
+            CartService cartService = new CartService(context);
             SessionModel parameters = new SessionModel();
             CartModel model = new CartModel();
-            CartDB cart = new CartDB();
-            parameters.CartMemory = cart.AddItensMemory(model, parameters.CartMemory);            
+            parameters.CartMemory = cartService.AddItensMemory(model, parameters.CartMemory);            
 
             //Chama a função para pegar o IP do PC
             ClientDB client = new ClientDB();
             parameters.Session = client.GetIP();
 
             //Chama a função para pegar a quantidade que está no carrinho
-            CartService cartService = new CartService();
             var countProducts = cartService.TotalCart(parameters);
             parameters.CountProduct = countProducts.TotalAmount;
 

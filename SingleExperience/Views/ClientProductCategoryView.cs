@@ -1,5 +1,4 @@
 ﻿using SingleExperience.Services.ProductServices;
-using SingleExperience.Views;
 using SingleExperience.Enums;
 using System;
 using System.Globalization;
@@ -11,9 +10,10 @@ namespace SingleExperience.Views
 {
     class ClientProductCategoryView
     {
-        private CartService cartService = new CartService();
+        private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
+        private CartService cartService = new CartService(context);
         private ClientService clientService = new ClientService();
-        private ProductService productService = new ProductService();
+        private ProductService productService = new ProductService(context);
 
         //Chama ListaProdutos pela Categoria
         public void Category(CategoryEnum id, SessionModel parameters)

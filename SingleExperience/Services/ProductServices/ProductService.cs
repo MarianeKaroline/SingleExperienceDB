@@ -11,46 +11,75 @@ namespace SingleExperience.Services.ProductServices
 {
     public class ProductService
     {
-        private ProductDB productDB = new ProductDB();
-        private ProductDB product = new ProductDB();
-        private List<Product> list;
+        protected readonly SingleExperience.Context.SingleExperience context;
+
+        public ProductService(SingleExperience.Context.SingleExperience context)
+        {
+            this.context = context;
+        }
 
         public ProductService()
         {
-            list = product.ListProducts();
+        }
+
+        //Lê o arquivo CSV Produtos
+        public List<Product> List()
+        {
+            return context.Product
+                .Skip(1)
+                .Select(i => new Product()
+                {
+                    ProductId = i.ProductId,
+                    Name = i.Name,
+                    Price = i.Price,
+                    Detail = i.Detail,
+                    Amount = i.Amount,
+                    CategoryEnum = i.CategoryEnum,
+                    Ranking = i.Ranking,
+                    Available = i.Available,
+                    Rating = i.Rating
+                })
+                .ToList();
+        }
+
+        public List<ListProductsModel> ListAllProducts()
+        {
+            return List()
+                .Select(i => new ListProductsModel()
+                {
+                    ProductId = i.ProductId,
+                    Name = i.Name,
+                    Price = i.Price,
+                    Amount = i.Amount,
+                    CategoryId = i.CategoryEnum,
+                    Ranking = i.Ranking,
+                    Available = i.Available
+                })
+                .ToList();
         }
 
         //Listar Produtos Home
         public List<BestSellingModel> ListProducts()
         {
-            var bestSellingModel = new List<BestSellingModel>();
-
-            list
+            return context.Product
                 .Where(p => p.Available == true)
-                .OrderByDescending(p => p.Ranking)
                 .Take(5)
-                .ToList()
-                .ForEach(p =>
+                .OrderByDescending(p => p.Ranking)
+                .Select(i => new BestSellingModel()
                 {
-                    var selling = new BestSellingModel();
-                    selling.ProductId = p.ProductId;
-                    selling.Name = p.Name;
-                    selling.Price = p.Price;
-                    selling.Ranking = p.Ranking;
-                    selling.Available = p.Available;
-
-                    bestSellingModel.Add(selling);
-                });
-
-            return bestSellingModel;
+                    ProductId = i.ProductId,
+                    Name = i.Name,
+                    Price = i.Price,
+                    Available = i.Available,
+                    Ranking = i.Ranking
+                })
+                .ToList();
         }
 
         //Listar Produtos Categoria
         public List<CategoryModel> ListProductCategory(CategoryEnum categoryId)
         {
-            var productCategory = new List<CategoryModel>();
-
-            productCategory = list
+            return context.Product
                 .Where(p => p.Available == true && p.CategoryEnum == categoryId)
                 .Select(i => new CategoryModel()
                 {
@@ -60,17 +89,13 @@ namespace SingleExperience.Services.ProductServices
                     CategoryId = i.CategoryEnum,
                     Available = i.Available
                 })
-                .ToList();                
-
-            return productCategory;
+                .ToList();
         }
 
         //Listar Produto Selecionado
         public ProductSelectedModel SelectedProduct(int productId)
         {
-            var selectedModels = new ProductSelectedModel();
-
-            selectedModels = list
+            return context.Product
                 .Where(p => p.Available == true && p.ProductId == productId)
                 .Select(i => new ProductSelectedModel()
                 {
@@ -82,51 +107,79 @@ namespace SingleExperience.Services.ProductServices
                     Amount = i.Amount,
                     Detail = i.Detail
                 })
-                .FirstOrDefault();                
-
-            return selectedModels;
+                .FirstOrDefault();
         }
 
         //Se existe o produto com o id que o usuário digitou
         public bool HasProduct(int code)
         {
-            return list.Single(i => i.ProductId == code) != null;
+            return context.Product.Single(i => i.ProductId == code) != null;
         }
 
         //Diminui a quantidade do estoque quando a compra é confirmada pelo funcionário
-        public bool Confirm(List<ProductBoughtModel> list)
+        public bool Confirm(ProductBoughtModel product)
         {
-            var confirmed = false;
+            var teste = context.Product.FirstOrDefault(i => i.ProductId == product.ProductId);
 
-            list.ForEach(i =>
+            var model = new Entities.Product()
             {
-                confirmed = productDB.EditAmount(i.ProductId, i.Amount);
-            });
+                ProductId = teste.ProductId,
+                Name = teste.Name,
+                Price = teste.Price,
+                Detail = teste.Detail,
+                Amount = product.Amount,
+                CategoryEnum = teste.CategoryEnum,
+                Ranking = teste.Ranking,
+                Available = teste.Available,
+                Rating = teste.Rating
+            };
 
-            return confirmed;
+            context.Product.Update(model);
+            context.SaveChanges();
+
+            return true;
         }
 
-        public List<ListProductsModel> ListAllProducts()
+        //Deixando o produto disponivel ou indisponivel
+        public bool EditAvailable(int productId, bool available)
         {
-            var productsModel = new List<ListProductsModel>();
+            var teste = context.Product.FirstOrDefault(i => i.ProductId == productId);
 
-            list
-                .ToList()
-                .ForEach(p =>
-                {
-                    var products = new ListProductsModel();
-                    products.ProductId = p.ProductId;
-                    products.Name = p.Name;
-                    products.Price = p.Price;
-                    products.Amount = p.Amount;
-                    products.CategoryId = p.CategoryEnum;
-                    products.Ranking = p.Ranking;
-                    products.Available = p.Available;
+            var model = new Entities.Product()
+            {
+                ProductId = teste.ProductId,
+                Name = teste.Name,
+                Price = teste.Price,
+                Detail = teste.Detail,
+                Amount = teste.Amount,
+                CategoryEnum = teste.CategoryEnum,
+                Ranking = teste.Ranking,
+                Available = available,
+                Rating = teste.Rating
+            };
 
-                    productsModel.Add(products);
-                });
+            context.Product.Update(model);
+            context.SaveChanges();
 
-            return productsModel;
+            return true;          
+        }
+
+        public void AddNewProducts(AddNewProductModel newProduct)
+        {
+            var model = new Entities.Product()
+            {
+                Name = newProduct.Name,
+                Price = newProduct.Price,
+                Detail = newProduct.Detail,
+                Amount = newProduct.Amount,
+                CategoryEnum = newProduct.CategoryId,
+                Ranking = newProduct.Ranking,
+                Available = newProduct.Available,
+                Rating = newProduct.Rating
+            };
+
+            context.Product.Add(model);
+            context.SaveChanges();
         }
     }
 }

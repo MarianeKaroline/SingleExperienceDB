@@ -13,8 +13,9 @@ namespace SingleExperience.Views
 {
     class ClientFinishedView
     {
+        private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private BoughtDB boughtDB = new BoughtDB();
-        private CartService cart = new CartService();
+        private CartService cart = new CartService(context);
 
         public void ProductsBought(SessionModel parameters, AddBoughtModel addBought)
         {

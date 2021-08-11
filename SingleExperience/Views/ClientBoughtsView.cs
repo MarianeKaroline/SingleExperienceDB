@@ -10,8 +10,8 @@ namespace SingleExperience.Views
 {
     class ClientBoughtsView
     {
-
-        private BoughtService boughtService = new BoughtService();
+        static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
+        private BoughtService boughtService = new BoughtService(context);
 
         public void Boughts(List<BoughtModel> boughtModels, SessionModel parameters)
         {

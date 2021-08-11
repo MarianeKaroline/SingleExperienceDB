@@ -14,10 +14,11 @@ namespace SingleExperience.Views
 {
     class ClientSendingAddressView
     {
+        private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
+        private CartService cartService = new CartService(context);
         private AddBoughtModel addBought = new AddBoughtModel();
-        private BoughtService boughtService = new BoughtService();
+        private BoughtService boughtService = new BoughtService(context);
         private ClientService clientService = new ClientService();
-        private CartService cartService = new CartService();
         private AddressModel addressModel = new AddressModel();
         private ClientDB clientDB = new ClientDB();
 

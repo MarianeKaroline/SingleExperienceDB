@@ -15,11 +15,10 @@ namespace SingleExperience.Views
 {
     class ClientSignInView
     {
-
-        private CartDB cartDB = new CartDB();
+        private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
+        private CartService cartService = new CartService(context);
         private SignInModel signIn = new SignInModel();
         private ClientService ClientService = new ClientService();
-        private CartService cartService = new CartService();
 
 
         public void Login(SessionModel parameters, bool home)
@@ -56,7 +55,7 @@ namespace SingleExperience.Views
                 perfilEmployee.Menu(parameters);
             }
 
-            cartDB.PassItens(parameters);
+            cartService.PassItens(parameters);
             parameters.CartMemory = new List<ProductCart>();
             parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
 

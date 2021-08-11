@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using SingleExperience.Enums;
 using System.Text;
+using SingleExperience.Entities;
+using SingleExperience.Services.ProductServices;
 
 namespace SingleExperience.Services.CartServices
 {
@@ -18,60 +20,51 @@ namespace SingleExperience.Services.CartServices
             this.context = context;
         }
 
+        ProductService productService = new ProductService();
 
-        ProductDB productDB = new ProductDB();
-        CartDB cartDB = new CartDB();
-
-        //Listar produtos no carrinho
-        public List<ProductCartModel> ItemCart(SessionModel parameters, StatusProductEnum status)
+        public CartService()
         {
-            var prod = new List<ProductCartModel>();
+        }
 
-            if (parameters.Session.Length == 11)
-            {
-                var getCart = cartDB.GetCart(parameters.Session);
-                var itensCart = cartDB.ListItens(getCart.CartId);
+        //Read Datas
 
-                try
+        //Cart
+        public Cart GetCart(string userId)
+        {
+            //Irá procurar o carrinho pelo userId
+            return context.Cart
+                .Skip(1)
+                .Select(p => new Cart
                 {
-                    prod = itensCart
-                        .Where(i => i.StatusProductEnum == status)
-                        .Select(j => new ProductCartModel()
-                        {
-                            ProductId = j.ProductId,
-                            Name = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Name,
-                            CategoryId = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).CategoryEnum,
-                            StatusId = j.StatusProductEnum,
-                            Amount = j.Amount,
-                            Price = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Price
-                        })
-                        .ToList();
-                }
-                catch (IOException e)
+                    CartId = p.CartId,
+                    Cpf = p.Cpf,
+                    DateCreated = p.DateCreated
+                })
+                .FirstOrDefault(p => p.Cpf == userId);
+        }
+
+        //Itens Cart
+        public List<ProductCart> ListItens(int cartId)
+        {
+            //Retorna a lista de produtos do carrinho
+            return context.ProductCart
+                .Skip(1)
+                .Select(i => new ProductCart
                 {
-                    Console.WriteLine("Ocorreu um erro");
-                    Console.WriteLine(e.Message);
-                }
-            }
-            else
-            {
-                prod = parameters.CartMemory
-                        .Where(i => i.StatusProductEnum == status)
-                        .Select(j => new ProductCartModel()
-                        {
-                            ProductId = j.ProductId,
-                            StatusId = j.StatusProductEnum,
-                            Amount = j.Amount
-                        })
-                        .ToList();
-            }
-            return prod;
+                    ItemCartId = i.ItemCartId,
+                    ProductId = i.ProductId,
+                    CartId = i.CartId,
+                    Amount = i.Amount,
+                    StatusProductEnum = i.StatusProductEnum
+                })
+                .Where(i => i.CartId == cartId)
+                .ToList();
         }
 
         //Total do Carrinho
         public TotalCartModel TotalCart(SessionModel parameters)
         {
-            var itens = ItemCart(parameters, StatusProductEnum.Ativo);
+            var itens = ShowCart(parameters, StatusProductEnum.Ativo);
             var total = new TotalCartModel();
 
             if (parameters.Session.Length == 11)
@@ -93,18 +86,127 @@ namespace SingleExperience.Services.CartServices
                 else
                 {
                     total.TotalAmount = parameters.CartMemory.Sum(item => item.Amount);
-                    total.TotalPrice = parameters.CartMemory.Sum(item => productDB.ListProducts().FirstOrDefault(i => i.ProductId == item.ProductId).Price * item.Amount);
+                    total.TotalPrice = parameters.CartMemory.Sum(item => productService.ListProducts().FirstOrDefault(i => i.ProductId == item.ProductId).Price * item.Amount);
                 }
             }
 
             return total;
         }
 
-        //Remove um item do carrinho
+
+        //Add Datas
+
+        //Cart
+        public int AddCart(SessionModel parameters)
+        {
+            var currentCart = GetCart(parameters.Session);
+            var cartId = 0;
+
+            //Criar Carrinho
+            if (currentCart == null)
+            {
+                var cart = new Entities.Cart()
+                {
+                    Cpf = parameters.Session,
+                    DateCreated = DateTime.Now
+                };
+
+                context.Cart.Add(cart);
+                context.SaveChanges();
+
+                cartId = GetCart(parameters.Session).CartId;
+            }
+            else
+            {
+                cartId = currentCart.CartId;
+            }
+
+            return cartId;
+        }
+
+        //itens Cart
+        public void AddItemCart(SessionModel parameters, CartModel cartModel)
+        {
+            var cartId = AddCart(parameters);
+            var exist = ExistItem(parameters, cartModel);
+
+            if (parameters.CartMemory.Count > 0)
+            {
+                PassItens(parameters);
+                exist = true;
+            }
+
+            if (!exist)
+            {
+                var item = new Entities.ProductCart()
+                {
+                    ProductId = cartModel.ProductId,
+                    CartId = cartId,
+                    Amount = 1,
+                    StatusProductEnum = cartModel.StatusId
+                };
+
+                context.ProductCart.Add(item);
+                context.SaveChanges();
+            }
+        }
+
+        //Pass memory's itens to cart 
+        public void PassItens(SessionModel parameters)
+        {
+            var linesCart = new List<string>();
+            var exist = false;
+
+            //Verify if cliente already has a cart
+            var cartId = AddCart(parameters);
+            var listItensCart = ListItens(cartId);
+
+            //Verify if product is already in the cart
+            if (listItensCart.Count() > 0)
+            {
+                parameters.CartMemory.ForEach(i =>
+                {
+                    CartModel cartModel = new CartModel()
+                    {
+                        ProductId = i.ProductId,
+                        UserId = parameters.Session,
+                        Name = i.Product.Name,
+                        CategoryId = i.Product.CategoryEnum,
+                        StatusId = i.StatusProductEnum,
+                        Price = i.Product.Price
+                    };
+
+                    exist = ExistItem(parameters, cartModel);
+                });
+            }
+
+            //Passa the product to cart
+            if (!exist)
+            {
+                parameters.CartMemory.ForEach(i =>
+                {
+                    var item = new Entities.ProductCart()
+                    {
+                        ProductId = i.ProductId,
+                        CartId = cartId,
+                        Amount = 1,
+                        StatusProductEnum = i.StatusProductEnum
+                    };
+
+                    context.ProductCart.Add(item);
+                    context.SaveChanges();
+                });
+            }
+        }
+
+
+        //Update datas
+
+        //Remove a cart's item
         public void RemoveItem(int productId, string session, SessionModel parameters)
         {
-            var getCart = cartDB.GetCart(session);
-            var listItens = cartDB.ListItens(getCart.CartId);
+            var getCart = GetCart(session);
+            var listItens = ListItens(getCart.CartId);
             var sum = 0;
             var count = 0;
 
@@ -118,12 +220,12 @@ namespace SingleExperience.Services.CartServices
                         if (p.Amount > 1 && count == 0)
                         {
                             sum = p.Amount - 1;
-                            cartDB.EditAmount(productId, session, sum);
+                            EditAmount(productId, session, sum);
                             count++;
                         }
                         else if (p.Amount == 1)
                         {
-                            cartDB.EditStatusProduct(productId, session, StatusProductEnum.Inativo);
+                            EditStatusProduct(productId, session, StatusProductEnum.Inativo);
                         }
                     });
             }
@@ -151,17 +253,57 @@ namespace SingleExperience.Services.CartServices
 
         }
 
+        //Edit product's status
+        public void EditStatusProduct(int productId, string session, StatusProductEnum status)
+        {
+            var listItens = ListItens(GetCart(session).CartId).FirstOrDefault(i => i.ProductId == productId);
+            var auxAmount = 0;
+
+            if (status == StatusProductEnum.Ativo)
+            {
+                auxAmount = 1;
+            }
+            else
+            {
+                auxAmount = listItens.Amount;
+            }
+
+            var item = new Entities.ProductCart()
+            {
+                ProductId = productId,
+                CartId = GetCart(session).CartId,
+                Amount = auxAmount,
+                StatusProductEnum = status
+            };
+        }
+
+        //Edit product's amount
+        public void EditAmount(int productId, string session, int sub)
+        {
+            var listItens = ListItens(GetCart(session).CartId).FirstOrDefault(i => i.ProductId == productId);
+            var lines = new List<string>();
+
+            var item = new Entities.ProductCart()
+            {
+                ProductId = productId,
+                CartId = GetCart(session).CartId,
+                Amount = sub,
+                StatusProductEnum = listItens.StatusProductEnum
+            };
+        }
+
+
 
         private ClientDB clientDB = new ClientDB();
-        //Ver produtos antes da compra e depois
+        //Preview Bought's datas 
         public PreviewBoughtModel PreviewBoughts(SessionModel parameters, BuyModel bought, int addressId)
         {
             var preview = new PreviewBoughtModel();
             var client = clientDB.GetEnjoyer(bought.Session);
             var address = clientDB.ListAddress(parameters.Session);
             var card = clientDB.ListCard(bought.Session);
-            var cart = cartDB.GetCart(bought.Session);
-            var itens = cartDB.ListItens(cart.CartId);
+            var cart = GetCart(bought.Session);
+            var itens = ListItens(cart.CartId);
             var listProducts = new List<ProductCartModel>();
 
             //Pega alguns atributos do cliente
@@ -204,7 +346,7 @@ namespace SingleExperience.Services.CartServices
             {
                 bought.Ids.ForEach(i =>
                 {
-                    listProducts.Add(ItemCart(parameters, bought.Status)
+                    listProducts.Add(ShowCart(parameters, bought.Status)
                                     .Where(j => j.ProductId == i)
                                     .FirstOrDefault());
                 });
@@ -212,23 +354,141 @@ namespace SingleExperience.Services.CartServices
             }
             else
             {
-                preview.Itens = ItemCart(parameters, bought.Status);
+                preview.Itens = ShowCart(parameters, bought.Status);
             }
 
             return preview;
         }
 
-        //Depois que confirma a compra, chama os métodos para alterar os status do carrinho
+        //Show Cart's Itens
+        public List<ProductCartModel> ShowCart(SessionModel parameters, StatusProductEnum status)
+        {
+            var productService = new ProductService(context);
+            var prod = new List<ProductCartModel>();
+
+            if (parameters.Session.Length == 11)
+            {
+                var itensCart = ListItens(GetCart(parameters.Session).CartId);
+                var product = productService.ListAllProducts();
+
+                try
+                {
+                    prod = itensCart
+                        .Where(i => i.StatusProductEnum == status)
+                        .Select(j => new ProductCartModel()
+                        {
+                            ProductId = j.ProductId,
+                            Name = product.FirstOrDefault(i => i.ProductId == j.ProductId).Name,
+                            CategoryId = product.FirstOrDefault(i => i.ProductId == j.ProductId).CategoryId,
+                            StatusId = j.StatusProductEnum,
+                            Amount = j.Amount,
+                            Price = product.FirstOrDefault(i => i.ProductId == j.ProductId).Price
+                        })
+                        .ToList();
+                }
+                catch (IOException e)
+                {
+                    Console.WriteLine("Ocorreu um erro");
+                    Console.WriteLine(e.Message);
+                }
+            }
+            else
+            {
+                prod = parameters.CartMemory
+                        .Where(i => i.StatusProductEnum == status)
+                        .Select(j => new ProductCartModel()
+                        {
+                            ProductId = j.ProductId,
+                            StatusId = j.StatusProductEnum,
+                            Amount = j.Amount
+                        })
+                        .ToList();
+            }
+
+            return prod;
+        }
+
+        //After to confirm the bought call the method to change de status
         public bool Buy(List<BuyProductModel> products, string session)
         {
             var buy = false;
 
             products.ForEach(i =>
             {
-                cartDB.EditStatusProduct(i.ProductId, session, i.Status);
+                EditStatusProduct(i.ProductId, session, i.Status);
                 buy = true;
             });
             return buy;
+        }
+
+        //Verify if exist the item in the cart
+        public bool ExistItem(SessionModel parameters, CartModel cartModel)
+        {
+            var cartId = AddCart(parameters);
+            var listItensCart = ListItens(cartId);
+            var exist = false;
+            var sum = 1;
+
+            listItensCart.ForEach(j =>
+            {
+                if (j.ProductId == cartModel.ProductId && j.StatusProductEnum != StatusProductEnum.Ativo)
+                {
+                    EditStatusProduct(cartModel.ProductId, cartModel.UserId, StatusProductEnum.Ativo);
+                    exist = true;
+                }
+                else if (j.ProductId == cartModel.ProductId)
+                {
+                    sum += j.Amount;
+                    EditAmount(cartModel.ProductId, cartModel.UserId, sum);
+                    exist = true;
+                }
+            });
+
+            return exist;
+        }
+
+        /*Memory*/
+        //Pass the products to memory
+        public List<ProductCart> AddItensMemory(CartModel cart, List<ProductCart> cartMemory)
+        {
+            //Verify if cartMemory is empty
+            if (cartMemory == null)
+            {
+                cartMemory = new List<ProductCart>();
+            }
+            var sum = 1;
+
+            //Verify if cart productId is different of zero
+            if (cart.ProductId != 0)
+            {
+                var aux = cartMemory
+                        .Where(i => i.ProductId == cart.ProductId)
+                        .FirstOrDefault();
+
+                if (aux == null)
+                {
+                    var item = new ProductCart()
+                    {
+                        ItemCartId = 1,
+                        ProductId = cart.ProductId,
+                        Amount = sum,
+                        StatusProductEnum = cart.StatusId
+                    };
+                    cartMemory.Add(item);
+                }
+                else
+                {
+                    cartMemory.ForEach(i =>
+                    {
+                        i.ItemCartId = cartMemory.Count();
+                        i.ProductId = cart.ProductId;
+                        i.Amount += sum;
+                        i.StatusProductEnum = cart.StatusId;
+                    });
+                }
+            }
+
+            return cartMemory;
         }
     }
 }

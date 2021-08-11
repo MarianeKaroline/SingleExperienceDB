@@ -12,11 +12,12 @@ namespace SingleExperience.Views
 {
     class ClientPaymentMethodView
     {
+        static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
+        private CartService cartService = new CartService(context);
         public int j = 41;
         private ClientService clientService = new ClientService();
         private ClientDB clientDB = new ClientDB();
         private CardModel cardModel = new CardModel();
-        private CartService cartService = new CartService();
 
         public void Methods(SessionModel parameters, AddBoughtModel addBought)
         {

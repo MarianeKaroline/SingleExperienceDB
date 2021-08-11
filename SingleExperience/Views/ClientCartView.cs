@@ -10,14 +10,15 @@ using System.Globalization;
 using System.Linq;
 using System.IO;
 using System.Text;
+using SingleExperience.Services.ProductServices;
 
 namespace SingleExperience.Views
 {
     class ClientCartView
     {
-        private CartService cartService = new CartService();
-        private ProductDB productDB = new ProductDB();
-        private CartDB cartDB = new CartDB();
+        static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
+        private CartService cartService = new CartService(context);
+        private ProductService productService = new ProductService();
 
 
         public void ListCart(SessionModel parameters)
@@ -28,12 +29,12 @@ namespace SingleExperience.Views
 
             Console.WriteLine($"\nInício > Carrinho\n");
 
-            var itens = cartService.ItemCart(parameters, StatusProductEnum.Ativo);
+            var itens = cartService.ShowCart(parameters, StatusProductEnum.Ativo);
 
 
             itens.ForEach(p =>
             {
-                var product = productDB.ListProducts().FirstOrDefault(i => i.ProductId == p.ProductId);
+                var product = productService.ListProducts().FirstOrDefault(i => i.ProductId == p.ProductId);
 
                 if (p.StatusId == StatusProductEnum.Ativo)
                 {
@@ -65,7 +66,7 @@ namespace SingleExperience.Views
             var invalidCode = true;
             var invalidCodeRemove = true;
             var total = cartService.TotalCart(parameters);
-            var category = cartService.ItemCart(parameters, StatusProductEnum.Ativo)
+            var category = cartService.ShowCart(parameters, StatusProductEnum.Ativo)
                 .Select(p => p.CategoryId)
                 .FirstOrDefault();
 
@@ -143,11 +144,11 @@ namespace SingleExperience.Views
 
                             if (parameters.Session.Length < 11)
                             {
-                                parameters.CartMemory = cartDB.AddItensMemory(cartModel, parameters.CartMemory);
+                                parameters.CartMemory = cartService.AddItensMemory(cartModel, parameters.CartMemory);
                             }
                             else
                             {
-                                cartDB.AddItemCart(parameters, cartModel);
+                                cartService.AddItemCart(parameters, cartModel);
                                 parameters.CartMemory = new List<ProductCart>();
                             }
                         }

@@ -2,7 +2,9 @@
 using SingleExperience.Entities.Enums;
 using SingleExperience.Enums;
 using SingleExperience.Services.BoughtServices.Models;
+using SingleExperience.Services.CartServices;
 using SingleExperience.Services.EmployeeServices.Models;
+using SingleExperience.Services.ProductServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +14,9 @@ namespace SingleExperience.Services.EmployeeServices
     public class EmployeeService : EnjoyerDB
     {
         private BoughtDB boughtDB = new BoughtDB();
-        private CartDB cartDB = new CartDB();
+        private CartService cartService = new CartService();
         private ClientDB clientDB = new ClientDB();
-        private ProductDB productDB = new ProductDB();
+        private ProductService productService = new ProductService();
         private EmployeeDB employeeDB = new EmployeeDB();
 
         public List<BoughtModel> Bought()
@@ -27,8 +29,8 @@ namespace SingleExperience.Services.EmployeeServices
                 var client = clientDB.GetEnjoyer(i.Cpf);
                 var address = clientDB.ListAddress(i.Cpf);
                 var card = clientDB.ListCard(i.Cpf);
-                var cart = cartDB.GetCart(i.Cpf);
-                var itens = cartDB.ListItens(cart.CartId);
+                var cart = cartService.GetCart(i.Cpf);
+                var itens = cartService.ListItens(cart.CartId);
                 var boughtModel = new BoughtModel();
                 boughtModel.Itens = new List<ProductBoughtModel>();
 
@@ -74,9 +76,9 @@ namespace SingleExperience.Services.EmployeeServices
                     var product = new ProductBoughtModel();
 
                     product.ProductId = j.ProductId;
-                    product.ProductName = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Name;
+                    product.ProductName = productService.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Name;
                     product.Amount = j.Amount;
-                    product.Price = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Price;
+                    product.Price = productService.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Price;
                     product.BoughtId = j.BoughtId;
 
                     boughtModel.Itens.Add(product);

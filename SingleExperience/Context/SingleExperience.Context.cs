@@ -10,7 +10,7 @@ namespace SingleExperience.Context
         public DbSet<Address> Address { get; set; }
         public DbSet<CreditCard> CreditCard { get; set; }
         public DbSet<Cart> Cart { get; set; }
-        public DbSet<ProductCart> productCart { get; set; }
+        public DbSet<ProductCart> ProductCart { get; set; }
         public DbSet<StatusProductCart> StatusProductCart { get; set; }
         public DbSet<Bought> Bought { get; set; }
         public DbSet<ProductBought> ProductBought { get; set; }
