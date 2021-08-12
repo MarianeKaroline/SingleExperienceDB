@@ -1,5 +1,4 @@
-﻿using SingleExperience.Entities.DB;
-using SingleExperience.Entities;
+﻿using SingleExperience.Entities;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ClientServices;
@@ -8,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using SingleExperience.Services.EmployeeServices.Models;
+using SingleExperience.Services.EmployeeServices;
 
 namespace SingleExperience.Views
 {
@@ -17,10 +16,9 @@ namespace SingleExperience.Views
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private SignUpModel clientModel = new SignUpModel();
         private CartService cartService = new CartService(context);
-        private ClientDB clientDB = new ClientDB();
-        private ClientService clientService = new ClientService();
+        private ClientService clientService = new ClientService(context);
         private SignUpModel employee = new SignUpModel();
-        private EmployeeDB employeeDB = new EmployeeDB();
+        private EmployeeService employeeService = new EmployeeService(context);
 
 
         public string password = null;
@@ -135,7 +133,7 @@ namespace SingleExperience.Views
 
 
             clientModel.Employee = false;
-            var signUp = clientDB.SignUpClient(clientModel);
+            var signUp = clientService.SignUpClient(clientModel);
 
             if (signUp)
             {
@@ -154,7 +152,7 @@ namespace SingleExperience.Views
             }
             else
             {
-                parameters.Session = clientDB.GetIP();
+                parameters.Session = clientService.GetIP();
                 Console.WriteLine("Tecle enter para continuar");
                 Console.ReadKey();
                 cartView.ListCart(parameters);
@@ -390,7 +388,7 @@ namespace SingleExperience.Views
                 }
             }
 
-            var signUp = employeeDB.Register(employee);
+            var signUp = employeeService.Register(employee);
             if (signUp)
             {
                 Console.WriteLine("\nFuncionário cadastrado com sucesso\n");

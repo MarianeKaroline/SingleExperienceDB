@@ -102,7 +102,7 @@ namespace SingleExperience.Views
             }
             else
             {
-                if (boughtService.HasBought(parameters.Session, opc))
+                if (boughtService.HasBought(opc))
                 {
                     productsBoughtView.ProductsBought(boughtModels, parameters, opc);
                 }

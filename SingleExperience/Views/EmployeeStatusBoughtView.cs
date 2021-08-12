@@ -1,5 +1,4 @@
-﻿using SingleExperience.Entities.DB;
-using SingleExperience.Entities.Enums;
+﻿using SingleExperience.Entities.Enums;
 using SingleExperience.Enums;
 using SingleExperience.Services.BoughtServices;
 using SingleExperience.Services.BoughtServices.Models;
@@ -17,9 +16,8 @@ namespace SingleExperience.Views
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private BoughtService boughtService = new BoughtService(context);
-        private EmployeeService employeeService = new EmployeeService();
-        private ProductService productService = new ProductService();
-        private BoughtDB boughtDB = new BoughtDB();
+        private EmployeeService employeeService = new EmployeeService(context);
+        private ProductService productService = new ProductService(context);
 
         public void Bought(SessionModel parameters, StatusBoughtEnum status)
         {
@@ -126,56 +124,54 @@ namespace SingleExperience.Views
                     homeView.ListProducts(parameters);
                     break;
                 case 102:
+                    Console.Write("\nDigite o código da compra que deseja confirmar: ");
+                    var op = int.Parse(Console.ReadLine());
 
-                    //Console.Write("\nDigite o código da compra que deseja confirmar: ");
-                    //var op = int.Parse(Console.ReadLine());
+                    if (boughtService.HasBought(op))
+                    {
+                        var aux = list.FirstOrDefault(i => i.BoughtId == op).Itens;
 
-                    //if (boughtService.HasBoughts(op))
-                    //{
-                    //    var aux = list.FirstOrDefault(i => i.BoughtId == op).Itens;
+                        boughtService.UpdateStatus(op, StatusBoughtEnum.Confirmado);
+                        var confirmed = productService.Confirm(aux);
 
-                    //    boughtDB.UpdateStatus(op, StatusBoughtEnum.Confirmado);
-                    //    var confirmed = productService.Confirm(aux);
+                        if (confirmed)
+                        {
+                            Console.WriteLine("\nProduto confirmado com sucesso. (Tecle enter para continuar)\n");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nErro inesperado. (Tecle enter para continuar)\n");
+                            Console.ReadKey();
+                        }
 
-                    //    if (confirmed)
-                    //    {
-                    //        Console.WriteLine("\nProduto confirmado com sucesso. (Tecle enter para continuar)\n");
-                    //        Console.ReadKey();
-                    //    }
-                    //    else
-                    //    {
-                    //        Console.WriteLine("\nErro inesperado. (Tecle enter para continuar)\n");
-                    //        Console.ReadKey();
-                    //    }
-
-                    //    Bought(parameters, status);
-                    //}
+                        Bought(parameters, status);
+                    }
                     break;
                 case 103:
+                    Console.Write("\nDigite o código da compra que deseja cancelar: ");
+                    var opt = int.Parse(Console.ReadLine());
 
-                    //Console.Write("\nDigite o código da compra que deseja cancelar: ");
-                    //var opt = int.Parse(Console.ReadLine());
+                    if (boughtService.HasBought(opt))
+                    {
+                        var aux = list.FirstOrDefault(i => i.BoughtId == opt).Itens;
 
-                    //if (boughtService.HasBoughts(opt))
-                    //{
-                    //    var aux = list.FirstOrDefault(i => i.BoughtId == opt).Itens;
+                        boughtService.UpdateStatus(opt, StatusBoughtEnum.Cancelado);
+                        var confirmed = productService.Confirm(aux);
 
-                    //    boughtDB.UpdateStatus(opt, StatusBoughtEnum.Cancelado);
-                    //    var confirmed = productService.Confirm(aux);
+                        if (confirmed)
+                        {
+                            Console.WriteLine("\nProduto cancelado com sucesso. (Tecle enter para continuar)\n");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nErro inesperado. (Tecle enter para continuar)\n");
+                            Console.ReadKey();
+                        }
 
-                    //    if (confirmed)
-                    //    {
-                    //        Console.WriteLine("\nProduto cancelado com sucesso. (Tecle enter para continuar)\n");
-                    //        Console.ReadKey();
-                    //    }
-                    //    else
-                    //    {
-                    //        Console.WriteLine("\nErro inesperado. (Tecle enter para continuar)\n");
-                    //        Console.ReadKey();
-                    //    }
-
-                    //    Bought(parameters, status);
-                    //}
+                        Bought(parameters, status);
+                    }
                     break;
                 case 9:
                     Environment.Exit(0);

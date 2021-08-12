@@ -1,14 +1,12 @@
 ﻿using SingleExperience.Views;
 using SingleExperience.Services.CartServices;
-using SingleExperience.Entities.DB;
 using SingleExperience.Services.CartServices.Models;
+using SingleExperience.Services.ClientServices;
 
 namespace SingleExperience
 {
     class Program
     {
-        private static Context.SingleExperience context;
-
         static void Main(string[] args)
         {
             SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
@@ -19,8 +17,8 @@ namespace SingleExperience
             parameters.CartMemory = cartService.AddItensMemory(model, parameters.CartMemory);            
 
             //Chama a função para pegar o IP do PC
-            ClientDB client = new ClientDB();
-            parameters.Session = client.GetIP();
+            ClientService clientService = new ClientService(context);
+            parameters.Session = clientService.GetIP();
 
             //Chama a função para pegar a quantidade que está no carrinho
             var countProducts = cartService.TotalCart(parameters);

@@ -1,14 +1,11 @@
-﻿using SingleExperience.Entities.DB;
-using SingleExperience.Services.BoughtServices;
+﻿using SingleExperience.Services.BoughtServices;
 using SingleExperience.Services.BoughtServices.Models;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace SingleExperience.Views
 {
@@ -18,9 +15,8 @@ namespace SingleExperience.Views
         private CartService cartService = new CartService(context);
         private AddBoughtModel addBought = new AddBoughtModel();
         private BoughtService boughtService = new BoughtService(context);
-        private ClientService clientService = new ClientService();
+        private ClientService clientService = new ClientService(context);
         private AddressModel addressModel = new AddressModel();
-        private ClientDB clientDB = new ClientDB();
 
         public void ListAddress(SessionModel parameters)
         {
@@ -232,7 +228,7 @@ namespace SingleExperience.Views
             addressModel.State = Console.ReadLine();
             addressModel.ClientId = parameters.Session;
 
-            var addressId = clientDB.AddAddress(parameters.Session, addressModel);
+            var addressId = clientService.AddAddress(parameters.Session, addressModel);
             addBought.AddressId = addressId;
 
 

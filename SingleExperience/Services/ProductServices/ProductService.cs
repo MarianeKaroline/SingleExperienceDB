@@ -1,5 +1,5 @@
 ﻿using SingleExperience.Services.ProductServices.Model;
-using SingleExperience.Entities.DB;
+
 using SingleExperience.Entities;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,29 +22,9 @@ namespace SingleExperience.Services.ProductServices
         {
         }
 
-        //Lê o arquivo CSV Produtos
-        public List<Product> List()
-        {
-            return context.Product
-                .Skip(1)
-                .Select(i => new Product()
-                {
-                    ProductId = i.ProductId,
-                    Name = i.Name,
-                    Price = i.Price,
-                    Detail = i.Detail,
-                    Amount = i.Amount,
-                    CategoryEnum = i.CategoryEnum,
-                    Ranking = i.Ranking,
-                    Available = i.Available,
-                    Rating = i.Rating
-                })
-                .ToList();
-        }
-
         public List<ListProductsModel> ListAllProducts()
         {
-            return List()
+            return context.Product
                 .Select(i => new ListProductsModel()
                 {
                     ProductId = i.ProductId,
@@ -117,25 +97,28 @@ namespace SingleExperience.Services.ProductServices
         }
 
         //Diminui a quantidade do estoque quando a compra é confirmada pelo funcionário
-        public bool Confirm(ProductBoughtModel product)
+        public bool Confirm(List<ProductBoughtModel> product)
         {
-            var teste = context.Product.FirstOrDefault(i => i.ProductId == product.ProductId);
-
-            var model = new Entities.Product()
+            product.ForEach(j =>
             {
-                ProductId = teste.ProductId,
-                Name = teste.Name,
-                Price = teste.Price,
-                Detail = teste.Detail,
-                Amount = product.Amount,
-                CategoryEnum = teste.CategoryEnum,
-                Ranking = teste.Ranking,
-                Available = teste.Available,
-                Rating = teste.Rating
-            };
+                var teste = context.Product.FirstOrDefault(i => i.ProductId == j.ProductId);
 
-            context.Product.Update(model);
-            context.SaveChanges();
+                var model = new Entities.Product()
+                {
+                    ProductId = teste.ProductId,
+                    Name = teste.Name,
+                    Price = teste.Price,
+                    Detail = teste.Detail,
+                    Amount = j.Amount,
+                    CategoryEnum = teste.CategoryEnum,
+                    Ranking = teste.Ranking,
+                    Available = teste.Available,
+                    Rating = teste.Rating
+                };
+
+                context.Product.Update(model);
+                context.SaveChanges();
+            });
 
             return true;
         }

@@ -1,17 +1,13 @@
-﻿using SingleExperience.Entities.DB;
-using SingleExperience.Services.CartServices.Models;
+﻿using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.EmployeeServices;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SingleExperience.Views
 {
     class EmployeePerfilView
     {
-
-        private EmployeeService employeeService = new EmployeeService();
-        private EmployeeDB employeeDB = new EmployeeDB();
+        static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
+        private EmployeeService employeeService = new EmployeeService(context);
 
         public void Menu(SessionModel parameters)
         {
@@ -23,7 +19,7 @@ namespace SingleExperience.Views
             bool validate = true;
             int opc = 0;
 
-            var aux = employeeDB.Access(parameters.Session);
+            var aux = employeeService.Access(parameters.Session);
 
             Console.Clear();
 

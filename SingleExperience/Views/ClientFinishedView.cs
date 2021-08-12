@@ -1,4 +1,4 @@
-﻿using SingleExperience.Entities.DB;
+﻿
 using SingleExperience.Enums;
 using SingleExperience.Services.BoughtServices;
 using SingleExperience.Services.BoughtServices.Models;
@@ -7,15 +7,14 @@ using SingleExperience.Services.CartServices.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 
 namespace SingleExperience.Views
 {
     class ClientFinishedView
     {
         private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
-        private BoughtDB boughtDB = new BoughtDB();
-        private CartService cart = new CartService(context);
+        private BoughtService boughtService = new BoughtService(context);
+        private CartService cartService = new CartService(context);
 
         public void ProductsBought(SessionModel parameters, AddBoughtModel addBought)
         {
@@ -36,16 +35,16 @@ namespace SingleExperience.Views
             boughtModel.Status = StatusProductEnum.Comprado;
             boughtModel.Ids = ids;
 
-            var buy = cart.Buy(addBought.BuyProducts, parameters.Session);
+            var buy = cartService.Buy(addBought.BuyProducts, parameters.Session);
 
-            boughtDB.AddBought(parameters, addBought);
+            boughtService.AddBought(parameters, addBought);
 
             var j = 51;
 
 
             if (buy)
             {
-                var data = cart.PreviewBoughts(parameters, boughtModel, addBought.AddressId);
+                var data = cartService.PreviewBoughts(parameters, boughtModel, addBought.AddressId);
 
                 Console.Clear();
 
@@ -82,7 +81,7 @@ namespace SingleExperience.Views
                     Console.WriteLine($"+{new string('-', j)}+");
                 });
 
-                var total = cart.TotalCart(parameters);
+                var total = cartService.TotalCart(parameters);
 
                 Console.WriteLine($"Total do Pedido: R$ {addBought.TotalPrice}");
                 Console.WriteLine("\nTecle enter para continuar");

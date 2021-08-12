@@ -3,7 +3,6 @@ using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
 using System.Globalization;
-using SingleExperience.Entities.DB;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.BoughtServices.Models;
@@ -15,8 +14,7 @@ namespace SingleExperience.Views
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private CartService cartService = new CartService(context);
         public int j = 41;
-        private ClientService clientService = new ClientService();
-        private ClientDB clientDB = new ClientDB();
+        private ClientService clientService = new ClientService(context);
         private CardModel cardModel = new CardModel();
 
         public void Methods(SessionModel parameters, AddBoughtModel addBought)
@@ -201,7 +199,7 @@ namespace SingleExperience.Views
             Console.Write("Código de segurança(CVV): ");
             cardModel.CVV = int.Parse(Console.ReadLine());
 
-            clientDB.AddCard(parameters.Session, cardModel);
+            clientService.AddCard(parameters.Session, cardModel);
 
             if (home)
             {

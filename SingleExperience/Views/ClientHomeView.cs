@@ -1,25 +1,23 @@
 ﻿using System;
 using SingleExperience.Services.ProductServices;
-using System.Globalization;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Enums;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.BoughtServices;
 using SingleExperience.Services.EmployeeServices;
-using SingleExperience.Entities.DB;
+
 
 namespace SingleExperience.Views
 {
     class ClientHomeView
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
-        EmployeeService employee = new EmployeeService();
-        ClientService client = new ClientService();
+        EmployeeService employee = new EmployeeService(context);
+        ClientService clientService = new ClientService(context);
         BoughtService boughtService = new BoughtService(context);
         ProductService productService = new ProductService(context);
         CartService cartService = new CartService(context);
-        ClientDB clientDB = new ClientDB();
 
         //Tela inicial
         public void Menu(SessionModel parameters)
@@ -85,12 +83,12 @@ namespace SingleExperience.Views
                     cart.ListCart(parameters);
                     break;
                 case 3:                    
-                    if (parameters.Session.Length == 11 && clientDB.GetEnjoyer(parameters.Session).Employee == false)
+                    if (parameters.Session.Length == 11 && clientService.GetEnjoyer(parameters.Session).Employee == false)
                     {
                         var listBought = boughtService.ClientBought(parameters.Session);
                         perfilClientView.Menu(listBought, parameters);
                     }
-                    else if (parameters.Session.Length == 11 && clientDB.GetEnjoyer(parameters.Session).Employee == true)
+                    else if (parameters.Session.Length == 11 && clientService.GetEnjoyer(parameters.Session).Employee == true)
                     {
                         pefilEmployee.Menu(parameters);
                     }
@@ -102,7 +100,7 @@ namespace SingleExperience.Views
                 case 4:
                     if (parameters.Session.Length == 11)
                     {
-                        parameters.Session = client.SignOut();
+                        parameters.Session = clientService.SignOut();
                         parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                         ListProducts(parameters);
                     }
@@ -235,7 +233,7 @@ namespace SingleExperience.Views
 
             if (parameters.Session.Length == 11)
             {
-                Console.WriteLine($"Usuário: {client.ClientName(parameters.Session)}");
+                Console.WriteLine($"Usuário: {clientService.ClientName(parameters.Session)}");
             }
 
             products.ForEach(p =>

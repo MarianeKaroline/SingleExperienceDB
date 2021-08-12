@@ -1,26 +1,28 @@
 ﻿using SingleExperience.Services.CartServices.Models;
-using SingleExperience.Entities.DB;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SingleExperience.Enums;
-using System.Text;
 using SingleExperience.Entities;
 using SingleExperience.Services.ProductServices;
+using SingleExperience.Services.ClientServices;
 
 namespace SingleExperience.Services.CartServices
 {
     public class CartService
     {
         protected readonly SingleExperience.Context.SingleExperience context;
+        private ProductService productService;
+        private ClientService clientService;
 
         public CartService(SingleExperience.Context.SingleExperience context)
         {
             this.context = context;
+            productService = new ProductService(context);
+            clientService = new ClientService(context);
         }
 
-        ProductService productService = new ProductService();
 
         public CartService()
         {
@@ -33,7 +35,6 @@ namespace SingleExperience.Services.CartServices
         {
             //Irá procurar o carrinho pelo userId
             return context.Cart
-                .Skip(1)
                 .Select(p => new Cart
                 {
                     CartId = p.CartId,
@@ -48,7 +49,6 @@ namespace SingleExperience.Services.CartServices
         {
             //Retorna a lista de produtos do carrinho
             return context.ProductCart
-                .Skip(1)
                 .Select(i => new ProductCart
                 {
                     ItemCartId = i.ItemCartId,
@@ -114,7 +114,7 @@ namespace SingleExperience.Services.CartServices
                 context.Cart.Add(cart);
                 context.SaveChanges();
 
-                cartId = GetCart(parameters.Session).CartId;
+                cartId = context.Cart.LastOrDefault().CartId;
             }
             else
             {
@@ -206,28 +206,22 @@ namespace SingleExperience.Services.CartServices
         public void RemoveItem(int productId, string session, SessionModel parameters)
         {
             var getCart = GetCart(session);
-            var listItens = ListItens(getCart.CartId);
+            var getItem = ListItens(getCart.CartId).FirstOrDefault(i => i.ProductId == productId);
             var sum = 0;
             var count = 0;
 
             if (session.Length == 11)
             {
-                listItens
-                    .Where(i => i.ProductId == productId)
-                    .ToList()
-                    .ForEach(p =>
-                    {
-                        if (p.Amount > 1 && count == 0)
-                        {
-                            sum = p.Amount - 1;
-                            EditAmount(productId, session, sum);
-                            count++;
-                        }
-                        else if (p.Amount == 1)
-                        {
-                            EditStatusProduct(productId, session, StatusProductEnum.Inativo);
-                        }
-                    });
+                if (getItem.Amount > 1 && count == 0)
+                {
+                    sum = getItem.Amount - 1;
+                    EditAmount(productId, session, sum);
+                    count++;
+                }
+                else if (getItem.Amount == 1)
+                {
+                    EditStatusProduct(productId, session, StatusProductEnum.Inativo);
+                }
             }
             else
             {
@@ -256,7 +250,7 @@ namespace SingleExperience.Services.CartServices
         //Edit product's status
         public void EditStatusProduct(int productId, string session, StatusProductEnum status)
         {
-            var listItens = ListItens(GetCart(session).CartId).FirstOrDefault(i => i.ProductId == productId);
+            var getItem = ListItens(GetCart(session).CartId).FirstOrDefault(i => i.ProductId == productId);
             var auxAmount = 0;
 
             if (status == StatusProductEnum.Ativo)
@@ -265,7 +259,7 @@ namespace SingleExperience.Services.CartServices
             }
             else
             {
-                auxAmount = listItens.Amount;
+                auxAmount = getItem.Amount;
             }
 
             var item = new Entities.ProductCart()
@@ -275,12 +269,15 @@ namespace SingleExperience.Services.CartServices
                 Amount = auxAmount,
                 StatusProductEnum = status
             };
+
+            context.ProductCart.Update(item);
+            context.SaveChanges();
         }
 
         //Edit product's amount
         public void EditAmount(int productId, string session, int sub)
         {
-            var listItens = ListItens(GetCart(session).CartId).FirstOrDefault(i => i.ProductId == productId);
+            var getItem = ListItens(GetCart(session).CartId).FirstOrDefault(i => i.ProductId == productId);
             var lines = new List<string>();
 
             var item = new Entities.ProductCart()
@@ -288,20 +285,20 @@ namespace SingleExperience.Services.CartServices
                 ProductId = productId,
                 CartId = GetCart(session).CartId,
                 Amount = sub,
-                StatusProductEnum = listItens.StatusProductEnum
+                StatusProductEnum = getItem.StatusProductEnum
             };
+
+            context.ProductCart.Update(item);
+            context.SaveChanges();
         }
 
-
-
-        private ClientDB clientDB = new ClientDB();
         //Preview Bought's datas 
         public PreviewBoughtModel PreviewBoughts(SessionModel parameters, BuyModel bought, int addressId)
         {
             var preview = new PreviewBoughtModel();
-            var client = clientDB.GetEnjoyer(bought.Session);
-            var address = clientDB.ListAddress(parameters.Session);
-            var card = clientDB.ListCard(bought.Session);
+            var client = clientService.GetEnjoyer(bought.Session);
+            var address = clientService.ListAddress(parameters.Session);
+            var card = clientService.ListCard(bought.Session);
             var cart = GetCart(bought.Session);
             var itens = ListItens(cart.CartId);
             var listProducts = new List<ProductCartModel>();

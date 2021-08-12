@@ -1,18 +1,15 @@
-﻿using SingleExperience.Entities.DB;
-using SingleExperience.Services.CartServices.Models;
+﻿using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.EmployeeServices;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SingleExperience.Views
 {
     class EmployeeRegisterView
     {
+        static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private EmployeeListAllBoughtView allBought = new EmployeeListAllBoughtView();
-        private EmployeeService employeeService = new EmployeeService();
+        private EmployeeService employeeService = new EmployeeService(context);
         private EmployeeInventoryView employeeInventory = new EmployeeInventoryView();
-        private EmployeeDB employeeDB = new EmployeeDB();
 
         public void ListEmployee(SessionModel parameters)
         {
@@ -20,7 +17,6 @@ namespace SingleExperience.Views
             var j = 51;
             char opc = '\0';
             var invalid = true;
-            var employeeService = new EmployeeService();
 
             Console.Clear();
 
@@ -72,7 +68,7 @@ namespace SingleExperience.Views
             bool validate = true;
             int opc = 0;
 
-            var aux = employeeDB.Access(parameters.Session);
+            var aux = employeeService.Access(parameters.Session);
 
             Console.Clear();
 

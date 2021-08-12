@@ -1,26 +1,22 @@
-﻿using SingleExperience.Entities.DB;
-using SingleExperience.Enums;
+﻿using SingleExperience.Enums;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.EmployeeServices;
 using SingleExperience.Services.ProductServices;
 using SingleExperience.Services.ProductServices.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SingleExperience.Views
 {
     class EmployeeInventoryView
     {
-        private EmployeeService employeeService = new EmployeeService();
-        private ProductDB productDB = new ProductDB();
-        private EmployeeDB employeeDB = new EmployeeDB();
+        static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
+        private EmployeeService employeeService = new EmployeeService(context);
         private AddNewProductModel newProduct = new AddNewProductModel();
+        private ProductService productService = new ProductService(context);
 
         public void Inventory(SessionModel parameters)
         {
             var j = 51;
-            var productService = new ProductService();
             var invalid = true;
             char opc = '\0';
 
@@ -79,7 +75,7 @@ namespace SingleExperience.Views
             bool validate = true;
             int opc = 0;
 
-            var aux = employeeDB.Access(parameters.Session);
+            var aux = employeeService.Access(parameters.Session);
 
             Console.WriteLine("0. Voltar para o início");
             Console.WriteLine("1. Ver lista de compras");
@@ -135,10 +131,10 @@ namespace SingleExperience.Views
                     switch (op)
                     {
                         case 1:
-                            productDB.EditAvailable(opt, true);
+                            productService.EditAvailable(opt, true);
                             break;
                         case 2:
-                            productDB.EditAvailable(opt, false);
+                            productService.EditAvailable(opt, false);
                             break;
                         default:
                             break;
@@ -271,7 +267,7 @@ namespace SingleExperience.Views
                 }
             }
 
-            productDB.AddNewProducts(newProduct);
+            productService.AddNewProducts(newProduct);
             Inventory(parameters);
         }
     }

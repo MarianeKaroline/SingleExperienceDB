@@ -6,11 +6,9 @@ using System.Globalization;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ProductServices.Model;
-using SingleExperience.Entities.DB;
+
 using System.Collections.Generic;
 using SingleExperience.Entities;
-using System.IO;
-using System.Text;
 
 namespace SingleExperience.Views
 {
@@ -19,7 +17,7 @@ namespace SingleExperience.Views
         private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private ProductService productService = new ProductService(context);
         private CartService cartService = new CartService(context);
-        private ClientService clientService = new ClientService();
+        private ClientService clientService = new ClientService(context);
 
         //Listar Produtos
         public void SelectedProduct(int productId, SessionModel parameters)

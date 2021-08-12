@@ -1,4 +1,4 @@
-﻿using SingleExperience.Entities.DB;
+﻿
 using SingleExperience.Entities;
 using SingleExperience.Enums;
 using SingleExperience.Services.CartServices;
@@ -8,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.IO;
-using System.Text;
 using SingleExperience.Services.ProductServices;
 
 namespace SingleExperience.Views
@@ -18,7 +16,7 @@ namespace SingleExperience.Views
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private CartService cartService = new CartService(context);
-        private ProductService productService = new ProductService();
+        private ProductService productService = new ProductService(context);
 
 
         public void ListCart(SessionModel parameters)
@@ -56,7 +54,7 @@ namespace SingleExperience.Views
             ClientProductCategoryView productCategory = new ClientProductCategoryView();
             ClientSendingAddressView address = new ClientSendingAddressView();
             ClientHomeView inicio = new ClientHomeView();
-            ClientService client = new ClientService();
+            ClientService client = new ClientService(context);
             ClientSignUpView signUp = new ClientSignUpView();
             ClientSignInView signIn = new ClientSignInView();
 

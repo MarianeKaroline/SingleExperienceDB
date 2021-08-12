@@ -10,7 +10,6 @@ namespace SingleExperience.Views
     {
         private AddBoughtModel addBought = new AddBoughtModel();
 
-
         public void Menu(List<BoughtModel> boughtModels, SessionModel parameters)
         {
             ClientHomeView homeView = new ClientHomeView();

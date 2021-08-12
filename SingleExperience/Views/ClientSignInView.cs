@@ -1,5 +1,4 @@
-﻿using SingleExperience.Entities.DB;
-using SingleExperience.Entities;
+﻿using SingleExperience.Entities;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.EmployeeServices.Models;
@@ -7,9 +6,6 @@ using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
 using System.Collections.Generic;
-using SingleExperience.Services.EmployeeServices;
-using System.IO;
-using System.Text;
 
 namespace SingleExperience.Views
 {
@@ -18,7 +14,7 @@ namespace SingleExperience.Views
         private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private CartService cartService = new CartService(context);
         private SignInModel signIn = new SignInModel();
-        private ClientService ClientService = new ClientService();
+        private ClientService ClientService = new ClientService(context);
 
 
         public void Login(SessionModel parameters, bool home)

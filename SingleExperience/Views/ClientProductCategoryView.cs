@@ -12,7 +12,7 @@ namespace SingleExperience.Views
     {
         private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private CartService cartService = new CartService(context);
-        private ClientService clientService = new ClientService();
+        private ClientService clientService = new ClientService(context);
         private ProductService productService = new ProductService(context);
 
         //Chama ListaProdutos pela Categoria

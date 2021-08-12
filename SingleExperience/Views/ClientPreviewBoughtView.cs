@@ -5,7 +5,6 @@ using SingleExperience.Services.CartServices.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 
 namespace SingleExperience.Views
 {

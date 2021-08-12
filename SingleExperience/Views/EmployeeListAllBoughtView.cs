@@ -10,8 +10,9 @@ namespace SingleExperience.Views
 {
     class EmployeeListAllBoughtView
     {
+        static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private EmployeeStatusBoughtView productStatus = new EmployeeStatusBoughtView();
-        private EmployeeService employeeService = new EmployeeService();
+        private EmployeeService employeeService = new EmployeeService(context);
 
         public void Bought(SessionModel parameters)
         {
