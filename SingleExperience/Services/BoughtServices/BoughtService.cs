@@ -15,7 +15,7 @@ namespace SingleExperience.Services.BoughtServices
     public class BoughtService
     {
         protected readonly SingleExperience.Context.SingleExperience context;
-        private ClientService clientDB;
+        private ClientService clientService;
         private ProductService productService;
         private CartService cartService;
 
@@ -24,7 +24,7 @@ namespace SingleExperience.Services.BoughtServices
             this.context = context;
             productService = new ProductService(context);
             cartService = new CartService(context);
-            clientDB = new ClientService(context);
+            clientService = new ClientService(context);
         }
                  
 
@@ -35,10 +35,11 @@ namespace SingleExperience.Services.BoughtServices
             return context.Bought
                 .Select(p => new Bought
                 {
+                    BoughtId = p.BoughtId,
                     TotalPrice = p.TotalPrice,
                     AddressId = p.AddressId,
                     PaymentEnum = p.PaymentEnum,
-                    CodeBought = p.CodeBought,
+                    CardNumber = p.CardNumber,
                     Cpf = p.Cpf,
                     StatusBoughtEnum = p.StatusBoughtEnum,
                     DateBought = p.DateBought
@@ -77,19 +78,17 @@ namespace SingleExperience.Services.BoughtServices
                 statusBought = StatusBoughtEnum.ConfirmacaoPendente;
 
             if (addBought.Payment == PaymentEnum.CreditCard)
-                codeBought = clientDB.ListCard(parameters.Session)
-                    .Where(p => p.CardNumber.ToString().Contains(addBought.CodeConfirmation))
-                    .FirstOrDefault().CardNumber
+                codeBought = clientService.ListCard(parameters.Session)
+                    .Where(p => p.Number.ToString().Contains(addBought.CodeConfirmation))
+                    .FirstOrDefault().Number
                     .ToString();
-            else
-                codeBought = addBought.CodeConfirmation;
 
             var bought = new Entities.Bought()
             {
                 TotalPrice = addBought.TotalPrice,
                 AddressId = addBought.AddressId,
                 PaymentEnum = addBought.Payment,
-                CodeBought = codeBought,
+                CardNumber = codeBought,
                 Cpf = parameters.Session,
                 StatusBoughtEnum = statusBought,
                 DateBought = DateTime.Now
@@ -108,14 +107,13 @@ namespace SingleExperience.Services.BoughtServices
                     .FirstOrDefault());
             });
 
-
             listItens.ForEach(i =>
             {
                 var ProductBought = new Entities.ProductBought()
                 {
                     ProductId = i.ProductId,
                     Amount = i.Amount,
-                    BoughtId = context.Bought.LastOrDefault().BoughtId
+                    BoughtId = context.Bought.OrderByDescending(j => j.BoughtId).FirstOrDefault().BoughtId
                 };
 
                 context.ProductBought.Add(ProductBought);
@@ -127,18 +125,9 @@ namespace SingleExperience.Services.BoughtServices
         {
             var getBought = context.Bought.FirstOrDefault(i => i.BoughtId == boughtId);
 
-            var bought = new Entities.Bought()
-            {
-                TotalPrice = getBought.TotalPrice,
-                AddressId = getBought.AddressId,
-                PaymentEnum = getBought.PaymentEnum,
-                CodeBought = getBought.CodeBought,
-                Cpf = getBought.Cpf,
-                StatusBoughtEnum = status,
-                DateBought = getBought.DateBought
-            };
+            getBought.StatusBoughtEnum = status;
 
-            context.Bought.Update(bought);
+            context.Bought.Update(getBought);
             context.SaveChanges();            
         }
 
@@ -146,67 +135,66 @@ namespace SingleExperience.Services.BoughtServices
         //Listar as compras do cliente
         public List<BoughtModel> ClientBought(string session)
         {
-            var client = clientDB.GetEnjoyer(session);
-            var address = clientDB.ListAddress(session);
-            var card = clientDB.ListCard(session);
+            var client = clientService.GetEnjoyer(session);
+            var address = clientService.ListAddress(session);
+            var card = clientService.ListCard(session);
             var cart = cartService.GetCart(session);
             var itens = cartService.ListItens(cart.CartId);
             var listProducts = new List<BoughtModel>();
 
             var listBought = List(session);
 
-            listBought.ForEach(i =>
+            if (listBought.Count > 0)
             {
-                var boughtModel = new BoughtModel();
-                boughtModel.Itens = new List<ProductBoughtModel>();
-
-                boughtModel.ClientName = client.FullName;
-                var aux = address
-                .FirstOrDefault(j => j.AddressId == i.AddressId);
-
-                boughtModel.Cep = aux.Cep;
-                boughtModel.Street = aux.Street;
-                boughtModel.Number = aux.Number;
-                boughtModel.City = aux.City;
-                boughtModel.State = aux.State;
-
-                boughtModel.BoughtId = i.BoughtId;
-                boughtModel.paymentMethod = (PaymentEnum)i.PaymentEnum;
-
-                if (i.PaymentEnum == PaymentEnum.CreditCard)
-                    card
-                    .Where(j => j.CardNumber.ToString().Contains(i.CodeBought))
-                    .ToList()
-                    .ForEach(k =>
-                    {
-                        boughtModel.NumberCard = k.CardNumber.ToString();
-                    });
-                else if (i.PaymentEnum == PaymentEnum.BankSlip)
-                    boughtModel.Code = i.CodeBought;
-                else
-                    boughtModel.Pix = i.CodeBought;
-
-                boughtModel.TotalPrice = i.TotalPrice;
-                boughtModel.DateBought = i.DateBought;
-                boughtModel.StatusId = i.StatusBoughtEnum;
-
-
-                ListProductBought(i.BoughtId)
-                .ToList()
-                .ForEach(j =>
+                listBought.ForEach(i =>
                 {
-                    var product = new ProductBoughtModel();
+                    var boughtModel = new BoughtModel();
+                    boughtModel.Itens = new List<ProductBoughtModel>();
 
-                    product.ProductId = j.ProductId;
-                    product.ProductName = productService.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Name;
-                    product.Amount = j.Amount;
-                    product.Price = productService.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Price;
+                    boughtModel.ClientName = client.Name;
+                    var aux = address
+                    .FirstOrDefault(j => j.AddressId == i.AddressId);
 
-                    boughtModel.Itens.Add(product);
+                    boughtModel.Cep = aux.PostCode;
+                    boughtModel.Street = aux.Street;
+                    boughtModel.Number = aux.Number;
+                    boughtModel.City = aux.City;
+                    boughtModel.State = aux.State;
+
+                    boughtModel.BoughtId = i.BoughtId;
+                    boughtModel.paymentMethod = (PaymentEnum)i.PaymentEnum;
+
+                    if (i.PaymentEnum == PaymentEnum.CreditCard)
+                        card
+                        .Where(j => j.Number.ToString().Contains(i.CardNumber))
+                        .ToList()
+                        .ForEach(k =>
+                        {
+                            boughtModel.NumberCard = k.Number.ToString();
+                        });
+
+                    boughtModel.TotalPrice = i.TotalPrice;
+                    boughtModel.DateBought = i.DateBought;
+                    boughtModel.StatusId = i.StatusBoughtEnum;
+
+
+                    ListProductBought(i.BoughtId)
+                    .ToList()
+                    .ForEach(j =>
+                    {
+                        var product = new ProductBoughtModel();
+
+                        product.ProductId = j.ProductId;
+                        product.ProductName = productService.ListAllProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Name;
+                        product.Amount = j.Amount;
+                        product.Price = productService.ListAllProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Price;
+
+                        boughtModel.Itens.Add(product);
+                    });
+
+                    listProducts.Add(boughtModel);
                 });
-
-                listProducts.Add(boughtModel);
-            });
+            }
 
             return listProducts;
         }
@@ -214,13 +202,13 @@ namespace SingleExperience.Services.BoughtServices
         //Verifica se o número que o cliente digitou está correto
         public bool HasBought(int boughtId)
         {
-            return context.Bought.FirstOrDefault(i => i.BoughtId == boughtId) != null;
+            return context.Bought.Any(i => i.BoughtId == boughtId);
         }
 
         //Verifica se cliente já cadastrou algum endereço
         public bool HasAddress(string session)
         {
-            return context.Bought.FirstOrDefault(i => i.Cpf == session) != null;
+            return context.Address.Any(i => i.Cpf == session);
         }
     }
 }

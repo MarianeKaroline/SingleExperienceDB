@@ -133,9 +133,10 @@ namespace SingleExperience.Views
                             }
                             invalidCode = false;
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
                             Console.WriteLine("Opção inválida, tente novamente.");
+                            Console.WriteLine(e);
                         }
                     }
                     break;

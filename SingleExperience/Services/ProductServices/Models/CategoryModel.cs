@@ -11,6 +11,6 @@ namespace SingleExperience.Services.ProductServices.Model
         public string Name { get; set; }
         public double Price { get; set; }
         public CategoryEnum CategoryId { get; set; }
-        public bool Available { get; set; }
+        public bool? Available { get; set; }
     }
 }

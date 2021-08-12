@@ -174,7 +174,7 @@ namespace SingleExperience.Views
                 try
                 {
                     Console.Write("Preço: ");
-                    newProduct.Price = double.Parse(Console.ReadLine());
+                    newProduct.Price = float.Parse(Console.ReadLine());
                     validate = false;
                 }
                 catch (Exception)

@@ -191,13 +191,13 @@ namespace SingleExperience.Views
             Console.WriteLine($"\n+{new string('-', j)}+\n");
             Console.Write("Novo Cartão\n");
             Console.Write("Número do cartão: ");
-            cardModel.CardNumber = long.Parse(Console.ReadLine());
+            cardModel.CardNumber = Console.ReadLine();
             Console.Write("Nome no cartão: ");
             cardModel.Name = Console.ReadLine();
             Console.Write("Data de expiração(01/2021): ");
             cardModel.ShelfLife = DateTime.ParseExact(Console.ReadLine(), "MM/yyyy", CultureInfo.InvariantCulture);
             Console.Write("Código de segurança(CVV): ");
-            cardModel.CVV = int.Parse(Console.ReadLine());
+            cardModel.CVV = Console.ReadLine();
 
             clientService.AddCard(parameters.Session, cardModel);
 
