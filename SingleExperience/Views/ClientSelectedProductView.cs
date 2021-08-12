@@ -24,7 +24,7 @@ namespace SingleExperience.Views
         {
             Console.Clear();
             var product = productService.SelectedProduct(productId);
-            var j = 41;
+            var j = 61;
             var category = (CategoryEnum)product.CategoryId;
 
             Console.WriteLine($"\nInício > Pesquisa > {category} > {product.Name}\n");

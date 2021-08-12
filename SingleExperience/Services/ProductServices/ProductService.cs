@@ -1,11 +1,9 @@
-﻿using SingleExperience.Services.ProductServices.Model;
-
-using SingleExperience.Entities;
+﻿using SingleExperience.Enums;
+using SingleExperience.Services.BoughtServices.Models;
+using SingleExperience.Services.ProductServices.Model;
+using SingleExperience.Services.ProductServices.Models;
 using System.Collections.Generic;
 using System.Linq;
-using SingleExperience.Services.BoughtServices.Models;
-using SingleExperience.Services.ProductServices.Models;
-using SingleExperience.Enums;
 
 namespace SingleExperience.Services.ProductServices
 {
@@ -16,10 +14,6 @@ namespace SingleExperience.Services.ProductServices
         public ProductService(SingleExperience.Context.SingleExperience context)
         {
             this.context = context;
-        }
-
-        public ProductService()
-        {
         }
 
         public List<ListProductsModel> ListAllProducts()
@@ -75,48 +69,41 @@ namespace SingleExperience.Services.ProductServices
         //Listar Produto Selecionado
         public ProductSelectedModel SelectedProduct(int productId)
         {
-            return context.Product
-                .Where(p => p.Available == true && p.ProductId == productId)
-                .Select(i => new ProductSelectedModel()
-                {
-                    Rating = i.Rating,
-                    CategoryId = i.CategoryEnum,
-                    ProductId = i.ProductId,
-                    Name = i.Name,
-                    Price = i.Price,
-                    Amount = i.Amount,
-                    Detail = i.Detail
-                })
-                .FirstOrDefault();
+            var teste = context.Product
+             .Where(p => p.Available == true && p.ProductId == productId)
+             .Select(i => new ProductSelectedModel()
+             {
+                 CategoryId = i.CategoryEnum,
+                 ProductId = i.ProductId,
+                 Name = i.Name,
+                 Amount = i.Amount,
+                 Detail = i.Detail,
+                 Price = i.Price,
+                 Rating = i.Rating
+             })
+             .FirstOrDefault();
+
+            return teste;
         }
 
         //Se existe o produto com o id que o usuário digitou
         public bool HasProduct(int code)
         {
-            return context.Product.Single(i => i.ProductId == code) != null;
+            return context.Product.Any(i => i.ProductId == code);
         }
 
         //Diminui a quantidade do estoque quando a compra é confirmada pelo funcionário
-        public bool Confirm(List<ProductBoughtModel> product)
+        public bool Confirm(List<ProductBoughtModel> products)
         {
-            product.ForEach(j =>
+            products.ForEach(j =>
             {
-                var teste = context.Product.FirstOrDefault(i => i.ProductId == j.ProductId);
+                var product = context.Product
+                    .Where(i => i.ProductId == j.ProductId)
+                    .FirstOrDefault();
 
-                var model = new Entities.Product()
-                {
-                    ProductId = teste.ProductId,
-                    Name = teste.Name,
-                    Price = teste.Price,
-                    Detail = teste.Detail,
-                    Amount = j.Amount,
-                    CategoryEnum = teste.CategoryEnum,
-                    Ranking = teste.Ranking,
-                    Available = teste.Available,
-                    Rating = teste.Rating
-                };
+                product.Amount = j.Amount;
 
-                context.Product.Update(model);
+                context.Product.Update(product);
                 context.SaveChanges();
             });
 
@@ -126,25 +113,15 @@ namespace SingleExperience.Services.ProductServices
         //Deixando o produto disponivel ou indisponivel
         public bool EditAvailable(int productId, bool available)
         {
-            var teste = context.Product.FirstOrDefault(i => i.ProductId == productId);
+            var product = context.Product
+                .FirstOrDefault(i => i.ProductId == productId && i.Available != available);
 
-            var model = new Entities.Product()
-            {
-                ProductId = teste.ProductId,
-                Name = teste.Name,
-                Price = teste.Price,
-                Detail = teste.Detail,
-                Amount = teste.Amount,
-                CategoryEnum = teste.CategoryEnum,
-                Ranking = teste.Ranking,
-                Available = available,
-                Rating = teste.Rating
-            };
+            product.Available = available;
 
-            context.Product.Update(model);
+            context.Product.Update(product);
             context.SaveChanges();
 
-            return true;          
+            return true;
         }
 
         public void AddNewProducts(AddNewProductModel newProduct)

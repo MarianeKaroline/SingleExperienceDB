@@ -1,7 +1,10 @@
+drop table Category;
 CREATE TABLE Category(
 	CategoryId INT NOT NULL,
 	Description VARCHAR(50) NOT NULL
 	PRIMARY KEY (CategoryId));
+
+drop table Product;
 
 CREATE TABLE Product( 
 	ProductId INT NOT NULL IDENTITY(1,1),
@@ -12,7 +15,7 @@ CREATE TABLE Product(
 	CategoryId INT NOT NULL,
 	Ranking INT NOT NULL,
 	Available BIT,
-	Rating FLOAT
+	Rating FLOAT NOT NULL
 	PRIMARY KEY (ProductId));
 
 CREATE TABLE Enjoyer(
@@ -31,13 +34,14 @@ CREATE TABLE AccessEmployee(
 	AccessRegister BIT,
 	PRIMARY KEY (Cpf));
 	
+DROP TABLE CreditCard;
 
 CREATE TABLE CreditCard (
 	CardId INT NOT NULL IDENTITY(1,1),
 	Number VARCHAR(20) NOT NULL,
 	Name VARCHAR(20) NOT NULL,
-	ShelLife DATE NOT NULL,
-	Cvv INT NOT NULL,
+	ShelfLife DATE NOT NULL,
+	Cvv VARCHAR(3) NOT NULL,
 	Cpf VARCHAR(11) NOT NULL
 	PRIMARY KEY (CardId));
 
@@ -64,8 +68,9 @@ CREATE TABLE StatusProductCart(
 	Description VARCHAR(50) NOT NULL
 	PRIMARY KEY (StatusProductCartId));
 
+drop table ProductCart;
 
-CREATE TABLE ItemCart(
+CREATE TABLE ProductCart(
 	ItemCartId INT NOT NULL IDENTITY(1,1),
 	ProductId INT NOT NULL,
 	CartId INT NOT NULL,
@@ -84,18 +89,20 @@ CREATE TABLE StatusBought(
 	Description VARCHAR(50) NOT NULL
 	PRIMARY KEY (StatusBoughtId));
 
+DROP TABLE Bought;
 
 CREATE TABLE Bought(
 	BoughtId INT NOT NULL IDENTITY(1,1),
-	TotalPrice INT NOT NULL,
+	TotalPrice FLOAT NOT NULL,
 	AddressId INT NOT NULL,
 	PaymentId INT NOT NULL,
-	CodeBought INT NOT NULL,
+	CardNumber VARCHAR(16),
 	Cpf VARCHAR(11) NOT NULL,
 	StatusBoughtId INT NOT NULL,
 	DateBought DATE NOT NULL
 	PRIMARY KEY (BoughtId));		
 
+DROP TABLE ProductBought;
 
 CREATE TABLE ProductBought(
 	ProductBoughtId INT NOT NULL IDENTITY(1,1),
@@ -125,15 +132,15 @@ ALTER TABLE Cart ADD CONSTRAINT FK_Cart_Enjoyer
 FOREIGN KEY (Cpf) REFERENCES Enjoyer (Cpf);
 
 ---CartId into ItemCart
-ALTER TABLE ItemCart ADD CONSTRAINT FK_ItemCart_Cart
+ALTER TABLE ProductCart ADD CONSTRAINT FK_ProductCart_Cart
 FOREIGN KEY (CartId) REFERENCES Cart (CartId);
 
 ---StatusProductCartId into ItemCart
-ALTER TABLE ItemCart ADD CONSTRAINT FK_ItemCart_StatusProductCart
+ALTER TABLE ProductCart ADD CONSTRAINT FK_ProductCart_StatusProductCart
 FOREIGN KEY (StatusProductCartId) REFERENCES StatusProductCart (StatusProductCartId);
 
 ---ProductId into ItemCart
-ALTER TABLE ItemCart ADD CONSTRAINT FK_ItemCart_Product
+ALTER TABLE ProductCart ADD CONSTRAINT FK_ProductCart_Product
 FOREIGN KEY (ProductId) REFERENCES Product (ProductId);
 
 ---Cpf into Bought
@@ -173,6 +180,24 @@ INSERT INTO Category (CategoryId, Description)
 			(4, 'Notebook'),
 			(5, 'Tablet');
 
+INSERT INTO Product (Name, Price, Detail, Amount, CategoryId, Ranking, Available, Rating)
+	VALUES ('Computador Acer',3000,'Marca: Acer;Processador: Intel Core I5;Velocidade do Processador: 2.9 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 250 GB;Placa de Video: Radeon RX 550',100,3,8,'True',0),
+	('Notebook Gamer Samsung',5000,'Marca: Samsung;Processador: Intel Core I5;Velocidade do Processador: 2.9 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 250 GB;Placa de Video: Radeon RX 550',50,4,9,'True',0),
+	('Celular Samsung A50',2500,'Marca: Samsung;Modelo: A50;Tamanho da Memoria: 4 GB;Armazenamento: 128 GB;Tela: 6.4 Polegadas;Câmera Traseira: 25MP;Câmera Frontal: 16MP',195,2,10,'True',0),
+	('Celular Redmi Note 10',2500,'Marca: Redmi;Modelo: Note 10;Tamanho da Memoria: 4 GB;Armazenamento: 128 GB;Tela: 6.4 Polegadas;Câmera Traseira: 25MP;Câmera Frontal: 16MP',27,2,20,'True',0),
+	('Computador Gamer',7000,'Processador: AMD Ryzen 5 5600X;Velocidade do Processador: 3.7GHz (4.6GHz Turbo);Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 256 GB;Placa de Video: RTX 2060 6GB',150,3,6,'True',0),
+	('Computador IBM',3893,'Processador:  Intel Pentium G4560;Velocidade do Processador: 3.5GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: 1TB;Placa de Video: GTX 1050 4GB',50,3,10,'True',0),
+	('Celular Iphone 12',4999,'Marca: Apple;Modelo: 12;Armazenamento: 64 GB;Tela: 6.1 Polegadas;Câmera Traseira: 12MP;Câmera Frontal: 12MP',98,2,5,'True',0),
+	('Notebook Dell',2800,'Marca: Dell;Processador: Intel® Pentium;Velocidade do Processador: 2GHz;Tamanho da Memoria: 4 GB;Tecnologia HD: SSD 128 GB;Placa de Video: Placa de vídeo integrada',199,4,9,'True',0),
+	('Notebook Asus',3499,'Marca: ASUS;Processador: AMD RYZEN 5;Velocidade do Processador: 2.1 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 256 GB;Placa de Video: Placa de vídeo integrada',138,4,20,'True',0),
+	('Teclado Gamer',129,'Marca: Trust;Tipo de teclado: Membrana;Comprimento do cabo: 180 cm;Fonte de Alimentação: USB;Iluminação: LED Rainbow',98,1,10,'True',0),
+	('Headset Gamer',1149,'Marca: Audio Technica;Resposta em frequência: 20 - 20.000 HZ;Sensibilidade: 96 dB/mW',89,1,5,'True',0),
+	('Mouse Gamer',139,'Marca: Corsair;Botões: 8;DPI: 12.400;Tipo de Sensor: Ótico;Conectividade: com fio',77,1,15,'True',0),
+	('iPad',2549,'Marca: Apple;Memória RAM: 6GB;Armazenamento: 32 GB',46,5,10,'True',0),
+	('Tablet Samsung',1399,'Marca: Samsung;Câmera Traseira: 8MP;Câmera Frontal: 5MP;Memória RAM: 3GB;Armazenamento: 64GB',88,5,13,'False',0),
+	('Tablet Multilaser',399,'Marca: Multilaser;Sistema operacional: Android 8.1; Armazenamento: 16 GB;Memória: 1GB',284,5,20,'True',0),
+	('Fone de ouvido',2000,'Marca: Xiaomi;Qualidade do audio: boa',100,1,1,'True',0);
+
 INSERT INTO Enjoyer (Cpf, Name, Phone, Email, BirthDate, Password, Employee)
 	VALUES ('10328698954', 'Maria da Silva', '995427605', 'maria@email.com', '19980705', '123456', 'true');
 
@@ -191,5 +216,8 @@ INSERT INTO StatusBought (StatusBoughtId, Description)
 			(2, 'Pending Payment'),
 			(3, 'Confirmed'),
 			(4, 'Canceled');
+
+INSERT INTO AccessEmployee (Cpf, AccessInventory, AccessRegister)
+	VALUES('10328698954', 'true', 'true');
 
 --- End Insert Datas Table

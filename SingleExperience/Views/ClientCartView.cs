@@ -32,7 +32,7 @@ namespace SingleExperience.Views
 
             itens.ForEach(p =>
             {
-                var product = productService.ListProducts().FirstOrDefault(i => i.ProductId == p.ProductId);
+                var product = productService.ListAllProducts().FirstOrDefault(i => i.ProductId == p.ProductId);
 
                 if (p.StatusId == StatusProductEnum.Ativo)
                 {

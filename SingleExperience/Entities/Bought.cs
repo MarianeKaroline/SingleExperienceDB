@@ -25,7 +25,7 @@ namespace SingleExperience.Entities
         [ForeignKey(nameof(PaymentEnum))]
         public Payment Payment { get; set; }
 
-        public string CodeBought { get; set; }
+        public string? CardNumber { get; set; }
         public string Cpf { get; set; }
         [ForeignKey(nameof(Cpf))]
         public User User { get; set; }

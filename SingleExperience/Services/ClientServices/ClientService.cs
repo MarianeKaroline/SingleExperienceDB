@@ -21,7 +21,8 @@ namespace SingleExperience.Services.ClientServices
             return context.Address
                 .Select(i => new Address
                 {
-                    Cep = i.Cep,
+                    AddressId = i.AddressId,
+                    PostCode = i.PostCode,
                     Street = i.Street,
                     Number = i.Number,
                     City = i.City,
@@ -39,10 +40,10 @@ namespace SingleExperience.Services.ClientServices
                     .Where(i => i.Cpf == userId)
                     .Select(i => new CreditCard
                     {
-                        CardNumber = i.CardNumber,
+                        Number = i.Number,
                         Name = i.Name,
                         ShelfLife = i.ShelfLife,
-                        CVV = i.CVV,
+                        Cvv = i.Cvv,
                         Cpf = i.Cpf
                     })
                     .ToList();
@@ -68,7 +69,7 @@ namespace SingleExperience.Services.ClientServices
         {
             var address = new Entities.Address()
             {
-                Cep = addressModel.Cep,
+                PostCode = addressModel.Cep,
                 Street = addressModel.Street,
                 Number = addressModel.Number,
                 City = addressModel.City,
@@ -79,23 +80,23 @@ namespace SingleExperience.Services.ClientServices
             context.Address.Add(address);
             context.SaveChanges();
 
-            return context.Address.LastOrDefault().AddressId;
+            return context.Address.FirstOrDefault().AddressId;
         }
 
         //Card
         public void AddCard(string session, CardModel card)
         {
-            var existCard = ListCard(session).FirstOrDefault(i => i.CardNumber == card.CardNumber);
+            var existCard = ListCard(session).FirstOrDefault(i => i.Number == card.CardNumber);
             var lines = new List<string>();
 
             if (existCard == null)
             {
                 var creditCard = new CreditCard()
                 {
-                    CardNumber = card.CardNumber,
+                    Number = card.CardNumber,
                     Name = card.Name,
                     ShelfLife = card.ShelfLife,
-                    CVV = card.CVV,
+                    Cvv = card.CVV,
                     Cpf = session
                 };
 
@@ -108,7 +109,7 @@ namespace SingleExperience.Services.ClientServices
         //Puxa o nome do cliente
         public string ClientName(string session)
         {
-            return GetEnjoyer(session).FullName;
+            return GetEnjoyer(session).Name;
         }
 
         //Verifica se o cliente possui cartão de crédito
@@ -123,7 +124,7 @@ namespace SingleExperience.Services.ClientServices
             return ListCard(session)
                 .Select(i => new ShowCardModel
                 {
-                    CardNumber = i.CardNumber.ToString(),
+                    CardNumber = i.Number.ToString(),
                     Name = i.Name,
                     ShelfLife = i.ShelfLife
                 })
@@ -139,10 +140,10 @@ namespace SingleExperience.Services.ClientServices
             return listAddress
                 .Select(i => new ShowAddressModel
                 {
-                    ClientName = client.FullName,
+                    ClientName = client.Name,
                     ClientPhone = client.Phone,
                     AddressId = i.AddressId,
-                    Cep = i.Cep,
+                    Cep = i.PostCode,
                     Street = i.Street,
                     Number = i.Number,
                     City = i.City,

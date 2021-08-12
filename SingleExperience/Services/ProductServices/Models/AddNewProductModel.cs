@@ -8,7 +8,7 @@ namespace SingleExperience.Services.ProductServices.Models
     public class AddNewProductModel
     {
         public string Name { get; set; }
-        public double Price { get; set; }
+        public float Price { get; set; }
         public string Detail { get; set; }
         public int Amount { get; set; }
         public CategoryEnum CategoryId { get; set; }

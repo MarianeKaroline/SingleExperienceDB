@@ -23,11 +23,6 @@ namespace SingleExperience.Services.CartServices
             clientService = new ClientService(context);
         }
 
-
-        public CartService()
-        {
-        }
-
         //Read Datas
 
         //Cart
@@ -86,7 +81,7 @@ namespace SingleExperience.Services.CartServices
                 else
                 {
                     total.TotalAmount = parameters.CartMemory.Sum(item => item.Amount);
-                    total.TotalPrice = parameters.CartMemory.Sum(item => productService.ListProducts().FirstOrDefault(i => i.ProductId == item.ProductId).Price * item.Amount);
+                    total.TotalPrice = parameters.CartMemory.Sum(item => productService.ListAllProducts().FirstOrDefault(i => i.ProductId == item.ProductId).Price * item.Amount);
                 }
             }
 
@@ -114,7 +109,7 @@ namespace SingleExperience.Services.CartServices
                 context.Cart.Add(cart);
                 context.SaveChanges();
 
-                cartId = context.Cart.LastOrDefault().CartId;
+                cartId = context.Cart.FirstOrDefault(i => i.Cpf == parameters.Session).CartId;
             }
             else
             {
@@ -170,10 +165,6 @@ namespace SingleExperience.Services.CartServices
                     {
                         ProductId = i.ProductId,
                         UserId = parameters.Session,
-                        Name = i.Product.Name,
-                        CategoryId = i.Product.CategoryEnum,
-                        StatusId = i.StatusProductEnum,
-                        Price = i.Product.Price
                     };
 
                     exist = ExistItem(parameters, cartModel);
@@ -189,7 +180,7 @@ namespace SingleExperience.Services.CartServices
                     {
                         ProductId = i.ProductId,
                         CartId = cartId,
-                        Amount = 1,
+                        Amount = i.Amount,
                         StatusProductEnum = i.StatusProductEnum
                     };
 
@@ -264,6 +255,7 @@ namespace SingleExperience.Services.CartServices
 
             var item = new Entities.ProductCart()
             {
+                ItemCartId = getItem.ItemCartId,
                 ProductId = productId,
                 CartId = GetCart(session).CartId,
                 Amount = auxAmount,
@@ -282,6 +274,7 @@ namespace SingleExperience.Services.CartServices
 
             var item = new Entities.ProductCart()
             {
+                ItemCartId = getItem.ItemCartId,
                 ProductId = productId,
                 CartId = GetCart(session).CartId,
                 Amount = sub,
@@ -304,14 +297,14 @@ namespace SingleExperience.Services.CartServices
             var listProducts = new List<ProductCartModel>();
 
             //Pega alguns atributos do cliente
-            preview.FullName = client.FullName;
+            preview.FullName = client.Name;
             preview.Phone = client.Phone;
 
             //Pega alguns atributos do endereço
             var aux = address
                 .FirstOrDefault(i => i.AddressId == addressId);
 
-            preview.Cep = aux.Cep;
+            preview.Cep = aux.PostCode;
             preview.Street = aux.Street;
             preview.Number = aux.Number;
             preview.City = aux.City;
@@ -322,11 +315,11 @@ namespace SingleExperience.Services.CartServices
             if (bought.Method == PaymentEnum.CreditCard)
             {
                 card
-                    .Where(i => i.CardNumber.ToString().Contains(bought.Confirmation))
+                    .Where(i => i.Number.ToString().Contains(bought.Confirmation))
                     .ToList()
                     .ForEach(i =>
                     {
-                        preview.NumberCard = i.CardNumber.ToString();
+                        preview.NumberCard = i.Number.ToString();
                     });
             }
             else if (bought.Method == PaymentEnum.BankSlip)

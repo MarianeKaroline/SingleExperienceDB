@@ -64,7 +64,7 @@ namespace SingleExperience.Services.UserServices
             var user = new User()
             {
                 Cpf = enjoyer.Cpf,
-                FullName = enjoyer.FullName,
+                Name = enjoyer.FullName,
                 Phone = enjoyer.Phone,
                 Email = enjoyer.Email,
                 BirthDate = enjoyer.BirthDate,

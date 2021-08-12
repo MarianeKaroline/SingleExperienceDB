@@ -82,11 +82,11 @@ namespace SingleExperience.Services.EmployeeServices
                 var boughtModel = new BoughtModel();
                 boughtModel.Itens = new List<ProductBoughtModel>();
 
-                boughtModel.ClientName = client.FullName;
+                boughtModel.ClientName = client.Name;
                 var aux = address
                 .FirstOrDefault(j => j.AddressId == i.AddressId);
 
-                boughtModel.Cep = aux.Cep;
+                boughtModel.Cep = aux.PostCode;
                 boughtModel.Street = aux.Street;
                 boughtModel.Number = aux.Number;
                 boughtModel.City = aux.City;
@@ -98,20 +98,20 @@ namespace SingleExperience.Services.EmployeeServices
                 if (i.PaymentEnum == PaymentEnum.CreditCard)
                 {
                     card
-                    .Where(j => j.CardNumber.ToString().Contains(i.CodeBought))
+                    .Where(j => j.Number.ToString().Contains(i.CardNumber))
                     .ToList()
                     .ForEach(k =>
                     {
-                        boughtModel.NumberCard = k.CardNumber.ToString();
+                        boughtModel.NumberCard = k.Number.ToString();
                     });
                 }
                 else if (i.PaymentEnum == PaymentEnum.BankSlip)
                 {
-                    boughtModel.Code = i.CodeBought;
+                    boughtModel.Code = i.CardNumber;
                 }
                 else
                 {
-                    boughtModel.Pix = i.CodeBought;
+                    boughtModel.Pix = i.CardNumber;
                 }
                 boughtModel.TotalPrice = i.TotalPrice;
                 boughtModel.DateBought = i.DateBought;
@@ -124,9 +124,9 @@ namespace SingleExperience.Services.EmployeeServices
                     var product = new ProductBoughtModel();
 
                     product.ProductId = j.ProductId;
-                    product.ProductName = productService.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Name;
+                    product.ProductName = productService.ListAllProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Name;
                     product.Amount = j.Amount;
-                    product.Price = productService.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Price;
+                    product.Price = productService.ListAllProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Price;
                     product.BoughtId = j.BoughtId;
 
                     boughtModel.Itens.Add(product);
@@ -150,7 +150,7 @@ namespace SingleExperience.Services.EmployeeServices
                      .Select(i => new RegisteredModel()
                      {
                          Cpf = i.Cpf,
-                         FullName = i.FullName,
+                         FullName = i.Name,
                          Email = i.Email,
                          AccessInventory = Access(i.Cpf).AccessInventory,
                          RegisterEmployee = Access(i.Cpf).AccessRegister

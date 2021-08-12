@@ -13,6 +13,6 @@ namespace SingleExperience.Services.ProductServices.Models
         public int Amount { get; set; }
         public CategoryEnum CategoryId { get; set; }
         public int Ranking { get; set; }
-        public bool Available { get; set; }
+        public bool? Available { get; set; }
     }
 }

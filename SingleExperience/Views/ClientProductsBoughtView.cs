@@ -43,9 +43,9 @@ namespace SingleExperience.Views
                     if (i.paymentMethod == PaymentEnum.CreditCard)
                         Console.WriteLine($"|(Crédito) com final {i.NumberCard.Substring(12)}{new string(' ', j - $"(Crédito) com final {i.NumberCard.Substring(12)}".Length)}|");
                     else if (i.paymentMethod == PaymentEnum.BankSlip)
-                        Console.WriteLine($"|(Boleto) {i.Code}{new string(' ', j - $"(Boleto) {i.Code}".Length)}|");
+                        Console.WriteLine($"|(Boleto){new string(' ', j - $"(Boleto)".Length)}|");
                     else
-                        Console.WriteLine($"|(PIX) {i.Pix}{new string(' ', j - $"(PIX) {i.Pix}".Length)}|");
+                        Console.WriteLine($"|(PIX){new string(' ', j - $"(PIX)".Length)}|");
 
                     Console.WriteLine($"|{new string(' ', j)}|");
 

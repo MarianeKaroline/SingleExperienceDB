@@ -20,7 +20,7 @@ namespace SingleExperience.Entities
         public Category Category { get; set; }
 
         public int Ranking { get; set; }
-        public bool Available { get; set; }
-        public float Rating { get; set; }
+        public bool? Available { get; set; }
+        public double Rating { get; set; }
     }
 }
