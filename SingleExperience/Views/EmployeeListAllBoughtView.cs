@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SingleExperience.Entities.Enums;
 using SingleExperience.Enums;
+using SingleExperience.Services.BoughtServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.EmployeeServices;
 
@@ -13,6 +14,7 @@ namespace SingleExperience.Views
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private EmployeeStatusBoughtView productStatus = new EmployeeStatusBoughtView();
         private EmployeeService employeeService = new EmployeeService(context);
+        private BoughtService boughtService = new BoughtService(context);
 
         public void Bought(SessionModel parameters)
         {
@@ -22,12 +24,12 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\nAdministrador > Lista Compras\n");
 
-            employeeService.Bought().ForEach(i =>
+            boughtService.ListAll().ForEach(i =>
             {
                 Console.WriteLine($"+{new string('-', j)}+");
                 Console.WriteLine($"|Pedido em {i.DateBought}{new string(' ', j - $"Pedido em {i.DateBought}".Length)}|");
                 Console.WriteLine($"|{new string(' ', j)}|");
-                Console.WriteLine($"|Status do pedido: {(StatusBoughtEnum)i.StatusId}{new string(' ', j - $"Status do pedido: {(StatusBoughtEnum)i.StatusId}".Length)}|");
+                Console.WriteLine($"|Status do pedido: {i.StatusId}{new string(' ', j - $"Status do pedido: {(StatusBoughtEnum)i.StatusId}".Length)}|");
                 Console.WriteLine($"|{new string(' ', j)}|");
                 Console.WriteLine($"|Endereço de entrega{new string(' ', j - "Endereço de entrega".Length)}|");
                 Console.WriteLine($"|{new string(' ', j)}|");

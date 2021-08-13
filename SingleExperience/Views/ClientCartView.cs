@@ -22,12 +22,12 @@ namespace SingleExperience.Views
         public void ListCart(SessionModel parameters)
         {
             Console.Clear();
-            var total = cartService.TotalCart(parameters);
+            var total = cartService.Total(parameters);
             var j = 41;
 
             Console.WriteLine($"\nInício > Carrinho\n");
 
-            var itens = cartService.ShowCart(parameters, StatusProductEnum.Ativo);
+            var itens = cartService.ShowProducts(parameters, StatusProductEnum.Ativo);
 
 
             itens.ForEach(p =>
@@ -63,8 +63,8 @@ namespace SingleExperience.Views
             var invalid = true;
             var invalidCode = true;
             var invalidCodeRemove = true;
-            var total = cartService.TotalCart(parameters);
-            var category = cartService.ShowCart(parameters, StatusProductEnum.Ativo)
+            var total = cartService.Total(parameters);
+            var category = cartService.ShowProducts(parameters, StatusProductEnum.Ativo)
                 .Select(p => p.CategoryId)
                 .FirstOrDefault();
 
@@ -146,13 +146,13 @@ namespace SingleExperience.Views
                             }
                             else
                             {
-                                cartService.AddItemCart(parameters, cartModel);
+                                cartService.AddProduct(parameters, cartModel);
                                 parameters.CartMemory = new List<ProductCart>();
                             }
                         }
                     });
 
-                    parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                    parameters.CountProduct = cartService.Total(parameters).TotalAmount;
 
                     Console.WriteLine("\n\nProduto adicionado com sucesso (Aperte enter para continuar)");
                     Console.ReadKey();
@@ -175,7 +175,7 @@ namespace SingleExperience.Views
                             {
                                 int codeRemove = int.Parse(Console.ReadLine());
                                 cartService.RemoveItem(codeRemove, parameters.Session, parameters);
-                                parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                                parameters.CountProduct = cartService.Total(parameters).TotalAmount;
                                 Console.WriteLine("\n\nProduto removido com sucesso (Aperte enter para continuar)");
                                 Console.ReadKey();
                                 invalidCodeRemove = false;
@@ -239,7 +239,7 @@ namespace SingleExperience.Views
                     if (parameters.Session.Length == 11)
                     {
                         parameters.Session = client.SignOut();
-                        parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                        parameters.CountProduct = cartService.Total(parameters).TotalAmount;
                         ListCart(parameters);
                     }
                     else

@@ -22,12 +22,12 @@ namespace SingleExperience.Views
         //Tela inicial
         public void Menu(SessionModel parameters)
         {
-            ClientSelectedProductView selectedProduct = new ClientSelectedProductView();
-            ClientSignInView signIn = new ClientSignInView();
-            ClientSignUpView signUp = new ClientSignUpView();
-            ClientPerfilView perfilClientView = new ClientPerfilView();
-            EmployeePerfilView pefilEmployee = new EmployeePerfilView();
-            ClientCartView cart = new ClientCartView();
+            var selectedProduct = new ClientSelectedProductView();
+            var signIn = new ClientSignInView();
+            var signUp = new ClientSignUpView();
+            var perfilClientView = new ClientPerfilView();
+            var pefilEmployee = new EmployeePerfilView();
+            var cart = new ClientCartView();
 
             var opc = 0;
             var invalid = true;
@@ -83,12 +83,12 @@ namespace SingleExperience.Views
                     cart.ListCart(parameters);
                     break;
                 case 3:                    
-                    if (parameters.Session.Length == 11 && clientService.GetEnjoyer(parameters.Session).Employee == false)
+                    if (parameters.Session.Length == 11 && clientService.GetUser(parameters.Session).Employee == false)
                     {
-                        var listBought = boughtService.ClientBought(parameters.Session);
+                        var listBought = boughtService.Show(parameters.Session);
                         perfilClientView.Menu(listBought, parameters);
                     }
-                    else if (parameters.Session.Length == 11 && clientService.GetEnjoyer(parameters.Session).Employee == true)
+                    else if (parameters.Session.Length == 11 && clientService.GetUser(parameters.Session).Employee == true)
                     {
                         pefilEmployee.Menu(parameters);
                     }
@@ -101,7 +101,7 @@ namespace SingleExperience.Views
                     if (parameters.Session.Length == 11)
                     {
                         parameters.Session = clientService.SignOut();
-                        parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                        parameters.CountProduct = cartService.Total(parameters).TotalAmount;
                         ListProducts(parameters);
                     }
                     else if (parameters.Session.Length > 11)
@@ -164,7 +164,7 @@ namespace SingleExperience.Views
         //Pesquisa
         public void Search(SessionModel parameters)
         {
-            ClientProductCategoryView products = new ClientProductCategoryView();
+            var products = new ClientProductCategoryView();
             Console.Clear();
 
             Console.WriteLine("\nInício > Pesquisa\n");

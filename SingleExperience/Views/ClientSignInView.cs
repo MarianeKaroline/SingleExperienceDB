@@ -53,7 +53,7 @@ namespace SingleExperience.Views
 
             cartService.PassItens(parameters);
             parameters.CartMemory = new List<ProductCart>();
-            parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+            parameters.CountProduct = cartService.Total(parameters).TotalAmount;
 
             //Verifica se página veio da home
             if (home)
@@ -106,7 +106,7 @@ namespace SingleExperience.Views
                     break;
                 case 3:
                     parameters.Session = ClientService.SignOut();
-                    parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                    parameters.CountProduct = cartService.Total(parameters).TotalAmount;
                     inicio.ListProducts(parameters);
                     break;
                 default:

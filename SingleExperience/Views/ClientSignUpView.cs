@@ -140,7 +140,7 @@ namespace SingleExperience.Views
                 parameters.Session = clientModel.Cpf;
                 cartService.PassItens(parameters);
                 parameters.CartMemory = new List<ProductCart>();
-                parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                parameters.CountProduct = cartService.Total(parameters).TotalAmount;
                 if (home)
                 {
                     Menu(parameters, home);
@@ -216,7 +216,7 @@ namespace SingleExperience.Views
                     break;
                 case 3:
                     parameters.Session = clientService.SignOut();
-                    parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                    parameters.CountProduct = cartService.Total(parameters).TotalAmount;
                     inicio.ListProducts(parameters);
                     break;
                 default:

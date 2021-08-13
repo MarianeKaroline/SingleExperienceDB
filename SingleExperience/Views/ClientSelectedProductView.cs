@@ -120,12 +120,12 @@ namespace SingleExperience.Views
                     }
                     else
                     {
-                        cartService.AddItemCart(parameters, cartModel);
+                        cartService.AddProduct(parameters, cartModel);
 
                         parameters.CartMemory = new List<ProductCart>();
                     }
 
-                    parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                    parameters.CountProduct = cartService.Total(parameters).TotalAmount;
 
                     Console.WriteLine("\nProduto adicionado com sucesso (Aperte enter para continuar)");
                     Console.ReadKey();
@@ -138,7 +138,7 @@ namespace SingleExperience.Views
                     if (parameters.Session.Length == 11)
                     {
                         parameters.Session = clientService.SignOut();
-                        parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                        parameters.CountProduct = cartService.Total(parameters).TotalAmount;
                         SelectedProduct(productId, parameters);
                     }
                     else

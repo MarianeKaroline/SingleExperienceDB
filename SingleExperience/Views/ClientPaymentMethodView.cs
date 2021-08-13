@@ -60,7 +60,7 @@ namespace SingleExperience.Views
         public void CreditCard(SessionModel parameters, AddBoughtModel addBought, bool home)
         {
             ClientPreviewBoughtView preview = new ClientPreviewBoughtView();
-            var op = "";
+            var op = 0;
             char opc = '\0';
             var invalid = true;
 
@@ -128,12 +128,12 @@ namespace SingleExperience.Views
                     {
                         case 's':
                             invalid = true;
-                            Console.Write("\nDigite os últimos 4 números do cartão: ");
+                            Console.Write("\nDigite o código do cartão #: ");
                             while (invalid)
                             {
                                 try
                                 {
-                                    op = Console.ReadLine();
+                                    op = int.Parse(Console.ReadLine());
                                     invalid = false;
                                 }
                                 catch (Exception)
@@ -142,7 +142,7 @@ namespace SingleExperience.Views
                                 }
                             }
                             addBought.Payment = PaymentEnum.CreditCard;
-                            addBought.CodeConfirmation = op;
+                            addBought.CreditCardId = op;
                             preview.Bought(parameters, addBought);
                             break;
                         case 'n':
@@ -166,7 +166,7 @@ namespace SingleExperience.Views
         {
             ClientPreviewBoughtView preview = new ClientPreviewBoughtView();
             var numberCode = Guid.NewGuid();
-            addBought.CodeConfirmation = numberCode.ToString();
+            addBought.ReferenceCode = numberCode.ToString();
 
             addBought.Payment = PaymentEnum.BankSlip;
             preview.Bought(parameters, addBought);
@@ -176,7 +176,7 @@ namespace SingleExperience.Views
         {
             ClientPreviewBoughtView preview = new ClientPreviewBoughtView();
             var numberPix = Guid.NewGuid();
-            addBought.CodeConfirmation = numberPix.ToString();
+            addBought.ReferenceCode = numberPix.ToString();
 
             addBought.Payment = PaymentEnum.Pix;
 
@@ -207,7 +207,7 @@ namespace SingleExperience.Views
             }
             else
             {
-                addBought.CodeConfirmation = cardModel.CardNumber.ToString();
+                addBought.CreditCardId = clientService.IdInserted(parameters.Session);
 
                 addBought.Payment = PaymentEnum.CreditCard;
                 preview.Bought(parameters, addBought);
@@ -261,7 +261,7 @@ namespace SingleExperience.Views
                     break;
                 case 3:
                     parameters.Session = clientService.SignOut();
-                    parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                    parameters.CountProduct = cartService.Total(parameters).TotalAmount;
                     home.ListProducts(parameters);
                     break;
                 case 9:

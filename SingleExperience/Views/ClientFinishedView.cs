@@ -31,20 +31,21 @@ namespace SingleExperience.Views
 
             boughtModel.Session = parameters.Session;
             boughtModel.Method = addBought.Payment;
-            boughtModel.Confirmation = addBought.CodeConfirmation;
+            boughtModel.Confirmation = addBought.ReferenceCode;
+            boughtModel.CreditCardId = addBought.CreditCardId;
             boughtModel.Status = StatusProductEnum.Comprado;
             boughtModel.Ids = ids;
 
-            var buy = cartService.Buy(addBought.BuyProducts, parameters.Session);
+            boughtService.Add(parameters.Session, addBought);
 
-            boughtService.AddBought(parameters, addBought);
+            var buy = cartService.CallEditStatus(addBought.BuyProducts, parameters.Session);
 
             var j = 51;
 
 
             if (buy)
             {
-                var data = cartService.PreviewBoughts(parameters, boughtModel, addBought.AddressId);
+                var data = boughtService.PreviewBoughts(parameters, boughtModel, addBought.AddressId);
 
                 Console.Clear();
 
@@ -81,7 +82,7 @@ namespace SingleExperience.Views
                     Console.WriteLine($"+{new string('-', j)}+");
                 });
 
-                var total = cartService.TotalCart(parameters);
+                var total = cartService.Total(parameters);
 
                 Console.WriteLine($"Total do Pedido: R$ {addBought.TotalPrice}");
                 Console.WriteLine("\nTecle enter para continuar");

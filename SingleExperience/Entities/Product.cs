@@ -9,7 +9,7 @@ namespace SingleExperience.Entities
         [Key]
         public int ProductId { get; set; }
         public string Name { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         public string Detail { get; set; }
         public int Amount { get; set; }
 
@@ -21,6 +21,6 @@ namespace SingleExperience.Entities
 
         public int Ranking { get; set; }
         public bool? Available { get; set; }
-        public double Rating { get; set; }
+        public decimal Rating { get; set; }
     }
 }

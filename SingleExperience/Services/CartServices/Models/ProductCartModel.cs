@@ -9,6 +9,6 @@ namespace SingleExperience.Services.CartServices.Models
         public CategoryEnum CategoryId { get; set; }
         public int Amount { get; set; }
         public StatusProductEnum StatusId { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
     }
 }

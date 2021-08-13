@@ -174,7 +174,7 @@ namespace SingleExperience.Views
                 try
                 {
                     Console.Write("Preço: ");
-                    newProduct.Price = float.Parse(Console.ReadLine());
+                    newProduct.Price = decimal.Parse(Console.ReadLine());
                     validate = false;
                 }
                 catch (Exception)
@@ -257,7 +257,7 @@ namespace SingleExperience.Views
                 try
                 {
                     Console.Write("Avaliação: ");
-                    newProduct.Rating = float.Parse(Console.ReadLine());
+                    newProduct.Rating = decimal.Parse(Console.ReadLine());
                     validate = false;
                 }
                 catch (Exception)
@@ -267,7 +267,7 @@ namespace SingleExperience.Views
                 }
             }
 
-            productService.AddNewProducts(newProduct);
+            productService.Add(newProduct);
             Inventory(parameters);
         }
     }

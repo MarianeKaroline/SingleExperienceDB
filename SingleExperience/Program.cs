@@ -21,7 +21,7 @@ namespace SingleExperience
             parameters.Session = clientService.GetIP();
 
             //Chama a função para pegar a quantidade que está no carrinho
-            var countProducts = cartService.TotalCart(parameters);
+            var countProducts = cartService.Total(parameters);
             parameters.CountProduct = countProducts.TotalAmount;
 
             //Chama a home para ser exibida inicialmente

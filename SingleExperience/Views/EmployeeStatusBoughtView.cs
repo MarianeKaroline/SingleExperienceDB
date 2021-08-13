@@ -27,7 +27,7 @@ namespace SingleExperience.Views
 
             Console.WriteLine($"\nAdministrador > Compras > {status}\n");
 
-            employeeService.BoughtPendent(status).ForEach(i =>
+            boughtService.BoughtPendent(status).ForEach(i =>
             {
                 Console.WriteLine($"+{new string('-', j)}+");
                 Console.WriteLine($"|Pedido n° {i.BoughtId}{new string(' ', j - $"Pedido n° {i.BoughtId}".Length)}|");
@@ -75,7 +75,7 @@ namespace SingleExperience.Views
                 });
             });
 
-            Menu(parameters, employeeService.BoughtPendent(StatusBoughtEnum.ConfirmacaoPendente), status);
+            Menu(parameters, boughtService.BoughtPendent(StatusBoughtEnum.ConfirmacaoPendente), status);
         }
 
         public void Menu(SessionModel parameters, List<BoughtModel> list, StatusBoughtEnum status)

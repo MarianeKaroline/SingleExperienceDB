@@ -9,7 +9,7 @@ namespace SingleExperience.Services.BoughtServices.Models
         public int ProductId { get; set; }
         public string ProductName { get; set; }
         public int Amount { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         public int BoughtId { get; set; }
     }
 }

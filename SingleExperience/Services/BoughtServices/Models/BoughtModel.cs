@@ -16,10 +16,11 @@ namespace SingleExperience.Services.BoughtServices.Models
         public string Cep { get; set; }        
         public PaymentEnum paymentMethod { get; set; }        
         public string NumberCard { get; set; }
+        public string ReferenceCode { get; set; }
         public string Code { get; set; }
         public string Pix { get; set; }
         public List<ProductBoughtModel> Itens { get; set; }
-        public double TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public StatusBoughtEnum StatusId { get; set; }
         public DateTime DateBought { get; set; }
     }

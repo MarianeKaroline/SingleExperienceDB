@@ -22,7 +22,7 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\nAdministrador > Lista funcionários\n");
 
-            employeeService.listEmployee().ForEach(i =>
+            employeeService.List().ForEach(i =>
             {
                 Console.WriteLine($"+{new string('-', j)}+");
                 Console.WriteLine($"|{new string(' ', j)}|");

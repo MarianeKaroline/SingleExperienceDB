@@ -33,7 +33,7 @@ namespace SingleExperience.Services.UserServices
 
         public User SignIn(SignInModel signIn)
         {
-            var client = GetEnjoyer(signIn.Email);
+            var client = GetUser(signIn.Email);
             User session = null;
 
             if (client != null)
@@ -53,10 +53,10 @@ namespace SingleExperience.Services.UserServices
             return GetIP();
         }
 
-        public User GetEnjoyer(string cpf)
+        public User GetUser(string cpf)
         {
             return context.Enjoyer
-                .FirstOrDefault(i => i.Cpf == cpf || i.Email == cpf);
+                .FirstOrDefault(i => i.Cpf == cpf);
         }
 
         public void SignUp(SignUpModel enjoyer)

@@ -159,6 +159,9 @@ FOREIGN KEY (AddressId) REFERENCES Address (AddressId);
 ALTER TABLE Bought ADD CONSTRAINT FK_Bought_StatusBought
 FOREIGN KEY (StatusBoughtId) REFERENCES StatusBought (StatusBoughtId);
 
+ALTER TABLE Bought ADD CONSTRAINT FK_Bought_CreditCard
+FOREIGN KEY (CreditCardId) REFERENCES CreditCard (CreditCardId);
+
 ---BoughtId into ProductBought
 ALTER TABLE ProductBought ADD CONSTRAINT FK_ProductBought_Bought
 FOREIGN KEY (BoughtId) REFERENCES Bought (BoughtId);

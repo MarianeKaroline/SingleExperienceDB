@@ -7,7 +7,7 @@ namespace SingleExperience.Entities
     public class ProductCart
     {
         [Key]
-        public int ItemCartId { get; set; }
+        public int ProductCartId { get; set; }
 
         //FK - Product
         public int ProductId { get; set; }

@@ -28,7 +28,7 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\nSua conta > Seus endereços cadastrados\n");
 
-            if (boughtService.HasAddress(parameters.Session))
+            if (clientService.HasAddress(parameters.Session))
             {
                 clientService.ShowAddress(parameters.Session)
                     .ForEach(p =>
@@ -90,7 +90,7 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\nCarrinho > Informações pessoais > Endereço\n");
 
-            if (boughtService.HasAddress(parameters.Session))
+            if (clientService.HasAddress(parameters.Session))
             {
                 Console.WriteLine($"Endereços cadastrados");
                 clientService.ShowAddress(parameters.Session)
@@ -226,9 +226,9 @@ namespace SingleExperience.Views
             addressModel.City = Console.ReadLine();
             Console.Write("Estado: ");
             addressModel.State = Console.ReadLine();
-            addressModel.ClientId = parameters.Session;
+            addressModel.Cpf = parameters.Session;
 
-            var addressId = clientService.AddAddress(parameters.Session, addressModel);
+            var addressId = clientService.AddAddress(addressModel);
             addBought.AddressId = addressId;
 
 
@@ -290,7 +290,7 @@ namespace SingleExperience.Views
                     break;
                 case 3:
                     parameters.Session = clientService.SignOut();
-                    parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                    parameters.CountProduct = cartService.Total(parameters).TotalAmount;
                     inicio.ListProducts(parameters);
                     break;
                 case 9:

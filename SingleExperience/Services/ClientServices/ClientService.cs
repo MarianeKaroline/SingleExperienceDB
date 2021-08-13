@@ -8,15 +8,15 @@ namespace SingleExperience.Services.ClientServices
 {
     public class ClientService : UserService
     {
-        protected readonly SingleExperience.Context.SingleExperience context;
+        protected readonly Context.SingleExperience context;
 
-        public ClientService(SingleExperience.Context.SingleExperience context) : base(context)
+        public ClientService(Context.SingleExperience context) : base(context)
         {
             this.context = context;
         }
 
         //Address
-        public List<Address> ListAddress(string userId)
+        public List<Address> ListAddress(string cpf)
         {
             return context.Address
                 .Select(i => new Address
@@ -29,15 +29,15 @@ namespace SingleExperience.Services.ClientServices
                     State = i.State,
                     Cpf = i.Cpf
                 })
-                .Where(i => i.Cpf == userId)
+                .Where(i => i.Cpf == cpf)
                 .ToList();
         }
 
         //Card
-        public List<CreditCard> ListCard(string userId)
+        public List<CreditCard> ListCard(string cpf)
         {
             return context.CreditCard
-                    .Where(i => i.Cpf == userId)
+                    .Where(i => i.Cpf == cpf)
                     .Select(i => new CreditCard
                     {
                         Number = i.Number,
@@ -54,7 +54,7 @@ namespace SingleExperience.Services.ClientServices
         //Client
         public bool SignUpClient(SignUpModel client)
         {
-            var existClient = GetEnjoyer(client.Cpf);
+            var existClient = GetUser(client.Cpf);
 
             if (existClient == null)
             {
@@ -65,7 +65,7 @@ namespace SingleExperience.Services.ClientServices
         }
 
         //Address
-        public int AddAddress(string session, AddressModel addressModel)
+        public int AddAddress(AddressModel addressModel)
         {
             var address = new Entities.Address()
             {
@@ -74,7 +74,7 @@ namespace SingleExperience.Services.ClientServices
                 Number = addressModel.Number,
                 City = addressModel.City,
                 State = addressModel.State,
-                Cpf = addressModel.ClientId
+                Cpf = addressModel.Cpf
             };
 
             context.Address.Add(address);
@@ -83,10 +83,15 @@ namespace SingleExperience.Services.ClientServices
             return context.Address.FirstOrDefault().AddressId;
         }
 
-        //Card
-        public void AddCard(string session, CardModel card)
+        public int IdInserted(string cpf)
         {
-            var existCard = ListCard(session).FirstOrDefault(i => i.Number == card.CardNumber);
+            return ListCard(cpf).OrderByDescending(j => j.CreditCardId).FirstOrDefault().CreditCardId;
+        }
+
+        //Card
+        public void AddCard(string cpf, CardModel card)
+        {
+            var existCard = ListCard(cpf).FirstOrDefault(i => i.Number == card.CardNumber);
             var lines = new List<string>();
 
             if (existCard == null)
@@ -97,7 +102,7 @@ namespace SingleExperience.Services.ClientServices
                     Name = card.Name,
                     ShelfLife = card.ShelfLife,
                     Cvv = card.CVV,
-                    Cpf = session
+                    Cpf = cpf
                 };
 
                 context.CreditCard.Add(creditCard);
@@ -107,21 +112,28 @@ namespace SingleExperience.Services.ClientServices
 
 
         //Puxa o nome do cliente
-        public string ClientName(string session)
+        public string ClientName(string cpf)
         {
-            return GetEnjoyer(session).Name;
+            return GetUser(cpf).Name;
         }
 
         //Verifica se o cliente possui cartão de crédito
-        public bool HasCard(string session)
+        public bool HasCard(string cpf)
         {
-            return ListCard(session).Count != 0;
+            return ListCard(cpf).Any();
+        }
+
+
+        //Verifica se cliente já cadastrou algum endereço
+        public bool HasAddress(string cpf)
+        {
+            return context.Address.Any(i => i.Cpf == cpf);
         }
 
         //Traz todos os cartões cadastrados do usuário
-        public List<ShowCardModel> ShowCards(string session)
+        public List<ShowCardModel> ShowCards(string cpf)
         {
-            return ListCard(session)
+            return ListCard(cpf)
                 .Select(i => new ShowCardModel
                 {
                     CardNumber = i.Number.ToString(),
@@ -131,11 +143,12 @@ namespace SingleExperience.Services.ClientServices
                 .ToList();
         }
 
+
         //Traz todos os endereços do usuário
-        public List<ShowAddressModel> ShowAddress(string session)
+        public List<ShowAddressModel> ShowAddress(string cpf)
         {
-            var client = GetEnjoyer(session);
-            var listAddress = ListAddress(session);
+            var client = GetUser(cpf);
+            var listAddress = ListAddress(cpf);
 
             return listAddress
                 .Select(i => new ShowAddressModel

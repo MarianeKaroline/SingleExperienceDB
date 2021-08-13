@@ -32,13 +32,12 @@ namespace SingleExperience.Services.ProductServices
                 .ToList();
         }
 
-        //Listar Produtos Home
         public List<BestSellingModel> ListProducts()
         {
             return context.Product
                 .Where(p => p.Available == true)
                 .Take(5)
-                .OrderByDescending(p => p.Ranking)
+                .OrderBy(p => p.Ranking)
                 .Select(i => new BestSellingModel()
                 {
                     ProductId = i.ProductId,
@@ -50,7 +49,6 @@ namespace SingleExperience.Services.ProductServices
                 .ToList();
         }
 
-        //Listar Produtos Categoria
         public List<CategoryModel> ListProductCategory(CategoryEnum categoryId)
         {
             return context.Product
@@ -66,10 +64,9 @@ namespace SingleExperience.Services.ProductServices
                 .ToList();
         }
 
-        //Listar Produto Selecionado
         public ProductSelectedModel SelectedProduct(int productId)
         {
-            var teste = context.Product
+            return context.Product
              .Where(p => p.Available == true && p.ProductId == productId)
              .Select(i => new ProductSelectedModel()
              {
@@ -82,17 +79,13 @@ namespace SingleExperience.Services.ProductServices
                  Rating = i.Rating
              })
              .FirstOrDefault();
-
-            return teste;
         }
 
-        //Se existe o produto com o id que o usuário digitou
         public bool HasProduct(int code)
         {
             return context.Product.Any(i => i.ProductId == code);
         }
 
-        //Diminui a quantidade do estoque quando a compra é confirmada pelo funcionário
         public bool Confirm(List<ProductBoughtModel> products)
         {
             products.ForEach(j =>
@@ -110,7 +103,6 @@ namespace SingleExperience.Services.ProductServices
             return true;
         }
 
-        //Deixando o produto disponivel ou indisponivel
         public bool EditAvailable(int productId, bool available)
         {
             var product = context.Product
@@ -124,7 +116,7 @@ namespace SingleExperience.Services.ProductServices
             return true;
         }
 
-        public void AddNewProducts(AddNewProductModel newProduct)
+        public void Add(AddNewProductModel newProduct)
         {
             var model = new Entities.Product()
             {

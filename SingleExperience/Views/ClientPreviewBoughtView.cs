@@ -1,4 +1,5 @@
 ﻿using SingleExperience.Enums;
+using SingleExperience.Services.BoughtServices;
 using SingleExperience.Services.BoughtServices.Models;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
@@ -12,6 +13,7 @@ namespace SingleExperience.Views
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private CartService cartService = new CartService(context);
+        private BoughtService boughtService = new BoughtService(context);
 
         public void Bought(SessionModel parameters, AddBoughtModel addBought)
         {
@@ -20,12 +22,13 @@ namespace SingleExperience.Views
 
             bought.Session = parameters.Session;
             bought.Method = addBought.Payment;
-            bought.Confirmation = addBought.CodeConfirmation;
+            bought.Confirmation = addBought.ReferenceCode;
+            bought.CreditCardId = addBought.CreditCardId;
             bought.Status = StatusProductEnum.Ativo;
             bought.Ids = ids;
 
-            var data = cartService.PreviewBoughts(parameters, bought, addBought.AddressId);
-            var total = cartService.TotalCart(parameters);
+            var data = boughtService.PreviewBoughts(parameters, bought, addBought.AddressId);
+            var total = cartService.Total(parameters);
             var listConfirmation = new List<BuyProductModel>();
             var j = 51;
 
@@ -88,7 +91,7 @@ namespace SingleExperience.Views
             ClientFinishedView finished = new ClientFinishedView();
             ClientCartView cartView = new ClientCartView();
 
-            var total = cartService.TotalCart(parameters);
+            var total = cartService.Total(parameters);
             var validate = true;
             var op = 0;
 

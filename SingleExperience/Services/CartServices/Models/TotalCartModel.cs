@@ -2,7 +2,7 @@
 {
     public class TotalCartModel
     {
-        public double TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public int TotalAmount { get; set; }
     }
 }

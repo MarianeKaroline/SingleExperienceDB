@@ -81,7 +81,7 @@ namespace SingleExperience.Views
                     if (parameters.Session.Length == 11)
                     {
                         parameters.Session = clientService.SignOut();
-                        parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                        parameters.CountProduct = cartService.Total(parameters).TotalAmount;
                         Category(id, parameters);
                     }
                     else

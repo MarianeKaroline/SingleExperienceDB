@@ -7,7 +7,7 @@ namespace SingleExperience.Entities
     public class CreditCard
     {
         [Key]
-        public int CardId { get; set; }
+        public int CreditCardId { get; set; }
         public string Number { get; set; }
         public string Name { get; set; }
         public DateTime ShelfLife { get; set; }

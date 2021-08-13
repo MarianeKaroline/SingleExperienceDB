@@ -12,7 +12,7 @@ namespace SingleExperience.Entities
     {
         [Key]
         public int BoughtId { get; set; }        
-        public double TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
 
         //FK - Address
         public int AddressId { get; set; }
@@ -25,7 +25,10 @@ namespace SingleExperience.Entities
         [ForeignKey(nameof(PaymentEnum))]
         public Payment Payment { get; set; }
 
-        public string? CardNumber { get; set; }
+        public int? CreditCardId { get; set; }
+        [ForeignKey(nameof(CreditCardId))]
+        public CreditCard CreditCard { get; set; }
+
         public string Cpf { get; set; }
         [ForeignKey(nameof(Cpf))]
         public User User { get; set; }
