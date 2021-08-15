@@ -9,7 +9,7 @@ using SingleExperience.Services.BoughtServices.Models;
 
 namespace SingleExperience.Views
 {
-    class ClientPaymentMethodView
+    class ClientPaymentMethodView : SessionModel
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private CartService cartService = new CartService(context);
@@ -17,7 +17,7 @@ namespace SingleExperience.Views
         private ClientService clientService = new ClientService(context);
         private CardModel cardModel = new CardModel();
 
-        public void Methods(SessionModel parameters, AddBoughtModel addBought)
+        public void Methods(AddBoughtModel addBought)
         {
             var op = 0;
             var invalid = true;
@@ -44,20 +44,20 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 1:
-                    CreditCard(parameters, addBought, false);
+                    CreditCard(addBought, false);
                     break;
                 case 2:
-                    BankSlip(parameters, addBought);
+                    BankSlip(addBought);
                     break;
                 case 3:
-                    Pix(parameters, addBought);
+                    Pix(addBought);
                     break;
                 default:
                     break;
             }
         }
 
-        public void CreditCard(SessionModel parameters, AddBoughtModel addBought, bool home)
+        public void CreditCard(AddBoughtModel addBought, bool home)
         {
             ClientPreviewBoughtView preview = new ClientPreviewBoughtView();
             var op = 0;
@@ -72,9 +72,9 @@ namespace SingleExperience.Views
             }
 
             //Se o cliente tiver cartões cadastrado, irá mostrar para ele
-            if (clientService.HasCard(parameters.Session))
+            if (clientService.HasCard(Session))
             {
-                clientService.ShowCards(parameters.Session)
+                clientService.ShowCards(Session)
                     .ForEach(p =>
                     {
                         Console.WriteLine($"\n(Crédito) com final {p.CardNumber.Substring(12)}        {p.Name}        {p.ShelfLife.ToString("MM/yyyy")}\n");
@@ -99,10 +99,10 @@ namespace SingleExperience.Views
                     switch (opc)
                     {
                         case 's':
-                            AddNewCreditCard(parameters, addBought, home);
+                            AddNewCreditCard(addBought, home);
                             break;
                         case 'n':
-                            Menu(parameters);
+                            Menu();
                             break;
                         default:
                             break;
@@ -143,36 +143,36 @@ namespace SingleExperience.Views
                             }
                             addBought.Payment = PaymentEnum.CreditCard;
                             addBought.CreditCardId = op;
-                            preview.Bought(parameters, addBought);
+                            preview.Bought(addBought);
                             break;
                         case 'n':
-                            AddNewCreditCard(parameters, addBought, false);
+                            AddNewCreditCard(addBought, false);
                             break;
                         default:
                             Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                             Console.ReadKey();
-                            CreditCard(parameters, addBought, home);
+                            CreditCard(addBought, home);
                             break;
                     }
                 }
             }
             else
             {
-                AddNewCreditCard(parameters, addBought, false);
+                AddNewCreditCard(addBought, false);
             }
         }
 
-        public void BankSlip(SessionModel parameters, AddBoughtModel addBought)
+        public void BankSlip(AddBoughtModel addBought)
         {
             ClientPreviewBoughtView preview = new ClientPreviewBoughtView();
             var numberCode = Guid.NewGuid();
             addBought.ReferenceCode = numberCode.ToString();
 
             addBought.Payment = PaymentEnum.BankSlip;
-            preview.Bought(parameters, addBought);
+            preview.Bought(addBought);
         }
 
-        public void Pix(SessionModel parameters, AddBoughtModel addBought)
+        public void Pix(AddBoughtModel addBought)
         {
             ClientPreviewBoughtView preview = new ClientPreviewBoughtView();
             var numberPix = Guid.NewGuid();
@@ -180,11 +180,11 @@ namespace SingleExperience.Views
 
             addBought.Payment = PaymentEnum.Pix;
 
-            preview.Bought(parameters, addBought);
+            preview.Bought(addBought);
         }
 
         //Caso a edição do cartão seja do perfil, o home tem que ser true
-        public void AddNewCreditCard(SessionModel parameters, AddBoughtModel addBought, bool home)
+        public void AddNewCreditCard(AddBoughtModel addBought, bool home)
         {
             ClientPreviewBoughtView preview = new ClientPreviewBoughtView();
 
@@ -199,22 +199,22 @@ namespace SingleExperience.Views
             Console.Write("Código de segurança(CVV): ");
             cardModel.CVV = Console.ReadLine();
 
-            clientService.AddCard(parameters.Session, cardModel);
+            clientService.AddCard(Session, cardModel);
 
             if (home)
             {
-                CreditCard(parameters, addBought, home);
+                CreditCard(addBought, home);
             }
             else
             {
-                addBought.CreditCardId = clientService.IdInserted(parameters.Session);
+                addBought.CreditCardId = clientService.IdInserted(Session);
 
                 addBought.Payment = PaymentEnum.CreditCard;
-                preview.Bought(parameters, addBought);
+                preview.Bought(addBought);
             }
         }
 
-        public void Menu(SessionModel parameters)
+        public void Menu()
         {
             ClientCartView cartView = new ClientCartView();
             var home = new ClientHomeView();
@@ -223,7 +223,7 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\n0. Precisa de ajuda?");
             Console.WriteLine("1. Voltar para o início");
-            Console.WriteLine($"2. Ver Carrinho (Quantidade: {parameters.CountProduct})");
+            Console.WriteLine($"2. Ver Carrinho (Quantidade: {CountProduct})");
             Console.WriteLine("3. Desconectar-se");
             Console.WriteLine("9. Sair do Sistema");
             while (invalid)
@@ -251,18 +251,18 @@ namespace SingleExperience.Views
                     Console.WriteLine("Tecle enter para continuar");
                     Console.ReadLine();
 
-                    home.ListProducts(parameters);
+                    home.ListProducts();
                     break;
                 case 1:
-                    home.ListProducts(parameters);
+                    home.ListProducts();
                     break;
                 case 2:
-                    cartView.ListCart(parameters);
+                    cartView.ListCart();
                     break;
                 case 3:
-                    parameters.Session = clientService.SignOut();
-                    parameters.CountProduct = cartService.Total(parameters).TotalAmount;
-                    home.ListProducts(parameters);
+                    Session = clientService.SignOut();
+                    CountProduct = cartService.Total().TotalAmount;
+                    home.ListProducts();
                     break;
                 case 9:
                     Environment.Exit(0);
@@ -270,7 +270,7 @@ namespace SingleExperience.Views
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Menu(parameters);
+                    Menu();
                     break;
             }
         }

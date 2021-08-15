@@ -8,7 +8,7 @@ using SingleExperience.Services.CartServices;
 
 namespace SingleExperience.Views
 {
-    class ClientProductCategoryView
+    class ClientProductCategoryView : SessionModel
     {
         private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private CartService cartService = new CartService(context);
@@ -16,18 +16,18 @@ namespace SingleExperience.Views
         private ProductService productService = new ProductService(context);
 
         //Chama ListaProdutos pela Categoria
-        public void Category(CategoryEnum id, SessionModel parameters)
+        public void Category(CategoryEnum id)
         {
             Console.Clear();
             Console.WriteLine($"\nInício > Pesquisa > {id}\n");
             var categoryId = Convert.ToInt32(id);
 
             ListProducts(id);
-            Menu(parameters, id);
+            Menu(id);
         }
 
         //Menu dos Produtos
-        public void Menu(SessionModel parameters, CategoryEnum id)
+        public void Menu(CategoryEnum id)
         {
             ClientSelectedProductView selectedProduct = new ClientSelectedProductView();
             ClientSignInView signIn = new ClientSignInView();
@@ -40,8 +40,8 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
-            Console.WriteLine($"2. Ver Carrinho (quantidade: {parameters.CountProduct})");
-            if (parameters.Session.Length < 11)
+            Console.WriteLine($"2. Ver Carrinho (quantidade: {CountProduct})");
+            if (Session.Length < 11)
             {
                 Console.WriteLine("3. Fazer Login");
                 Console.WriteLine("4. Cadastrar-se");
@@ -69,41 +69,41 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts(parameters);
+                    inicio.ListProducts();
                     break;
                 case 1:
-                    inicio.Search(parameters);
+                    inicio.Search();
                     break;
                 case 2:
-                    cartView.ListCart(parameters);
+                    cartView.ListCart();
                     break;
                 case 3:
-                    if (parameters.Session.Length == 11)
+                    if (Session.Length == 11)
                     {
-                        parameters.Session = clientService.SignOut();
-                        parameters.CountProduct = cartService.Total(parameters).TotalAmount;
-                        Category(id, parameters);
+                        Session = clientService.SignOut();
+                        CountProduct = cartService.Total().TotalAmount;
+                        Category(id);
                     }
                     else
                     {
-                        signIn.Login(parameters, true);
+                        signIn.Login(true);
                     }
                     break;
                 case 4:
-                    signUp.SignUp(parameters, true);
+                    signUp.SignUp(true);
                     break;
                 case 5:
                     Console.Write("\nDigite o código # do produto: ");
                     int code = int.Parse(Console.ReadLine());
                     if (productService.HasProduct(code))
                     {
-                        selectedProduct.SelectedProduct(code, parameters);
+                        selectedProduct.SelectedProduct(code);
                     }
                     else
                     {
                         Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                         Console.ReadKey();
-                        Menu(parameters, id);
+                        Menu(id);
                     }
                     break;
                 case 9:
@@ -112,7 +112,7 @@ namespace SingleExperience.Views
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Menu(parameters, id);
+                    Menu(id);
                     break;
             }
 

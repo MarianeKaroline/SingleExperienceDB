@@ -9,9 +9,9 @@ using System.Text;
 
 namespace SingleExperience.Views
 {
-    class ClientProductsBoughtView
+    class ClientProductsBoughtView : SessionModel
     {
-        public void ProductsBought(List<BoughtModel> boughtModels, SessionModel parameters, int boughtId)
+        public void ProductsBought(List<BoughtModel> boughtModels, int boughtId)
         {
             int j = 51;
 
@@ -40,9 +40,9 @@ namespace SingleExperience.Views
                     Console.WriteLine($"|Forma de pagamento{new string(' ', j - $"Forma de pagamento".Length)}|");
                     Console.WriteLine($"|{new string(' ', j)}|");
 
-                    if (i.paymentMethod == PaymentEnum.CreditCard)
+                    if (i.PaymentMethod == PaymentEnum.CreditCard)
                         Console.WriteLine($"|(Crédito) com final {i.NumberCard.Substring(12)}{new string(' ', j - $"(Crédito) com final {i.NumberCard.Substring(12)}".Length)}|");
-                    else if (i.paymentMethod == PaymentEnum.BankSlip)
+                    else if (i.PaymentMethod == PaymentEnum.BankSlip)
                         Console.WriteLine($"|(Boleto){new string(' ', j - $"(Boleto)".Length)}|");
                     else
                         Console.WriteLine($"|(PIX){new string(' ', j - $"(PIX)".Length)}|");
@@ -68,9 +68,9 @@ namespace SingleExperience.Views
                         Console.WriteLine($"+{new string('-', j)}+");
                     });
                 });
-            Menu(boughtModels, parameters);
+            Menu(boughtModels);
         }
-        public void Menu(List<BoughtModel> boughtModels, SessionModel parameters)
+        public void Menu(List<BoughtModel> boughtModels)
         {
             var homeView = new ClientHomeView();
             var perfilView = new ClientPerfilView();
@@ -95,11 +95,11 @@ namespace SingleExperience.Views
 
             if (opc == 0)
             {
-                homeView.ListProducts(parameters);
+                homeView.ListProducts();
             }
             else
             {
-                perfilView.Menu(boughtModels, parameters);
+                perfilView.Menu(boughtModels);
             }
         }
     }

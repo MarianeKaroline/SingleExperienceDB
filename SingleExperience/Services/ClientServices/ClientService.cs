@@ -54,7 +54,7 @@ namespace SingleExperience.Services.ClientServices
         //Client
         public bool SignUpClient(SignUpModel client)
         {
-            var existClient = GetUser(client.Cpf);
+            var existClient = GetUser();
 
             if (existClient == null)
             {
@@ -114,7 +114,7 @@ namespace SingleExperience.Services.ClientServices
         //Puxa o nome do cliente
         public string ClientName(string cpf)
         {
-            return GetUser(cpf).Name;
+            return GetUser().Name;
         }
 
         //Verifica se o cliente possui cartão de crédito
@@ -147,7 +147,7 @@ namespace SingleExperience.Services.ClientServices
         //Traz todos os endereços do usuário
         public List<ShowAddressModel> ShowAddress(string cpf)
         {
-            var client = GetUser(cpf);
+            var client = GetUser();
             var listAddress = ListAddress(cpf);
 
             return listAddress

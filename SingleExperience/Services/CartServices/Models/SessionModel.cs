@@ -5,8 +5,8 @@ namespace SingleExperience.Services.CartServices.Models
 {
     public class SessionModel
     {
-        public int CountProduct { get; set; }
-        public string Session { get; set; }
-        public List<ProductCart> CartMemory { get; set; }
+        public static int CountProduct { get; set; }
+        public static string Session { get; set; }
+        public static List<ProductCart> Itens { get; set; }
     }
 }

@@ -7,14 +7,14 @@ using System;
 
 namespace SingleExperience.Views
 {
-    class EmployeeInventoryView
+    class EmployeeInventoryView : SessionModel
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private EmployeeService employeeService = new EmployeeService(context);
         private AddNewProductModel newProduct = new AddNewProductModel();
         private ProductService productService = new ProductService(context);
 
-        public void Inventory(SessionModel parameters)
+        public void Inventory()
         {
             var j = 51;
             var invalid = true;
@@ -56,17 +56,17 @@ namespace SingleExperience.Views
             switch (opc)
             {
                 case 's':
-                    Add(parameters);
+                    Add();
                     break;
                 case 'n':
-                    Menu(parameters);
+                    Menu();
                     break;
                 default:
                     break;
             }
         }
 
-        public void Menu(SessionModel parameters)
+        public void Menu()
         {
             EmployeeRegisterView signUp = new EmployeeRegisterView();
             ClientHomeView homeView = new ClientHomeView();
@@ -75,7 +75,7 @@ namespace SingleExperience.Views
             bool validate = true;
             int opc = 0;
 
-            var aux = employeeService.Access(parameters.Session);
+            var aux = employeeService.Access(Session);
 
             Console.WriteLine("0. Voltar para o início");
             Console.WriteLine("1. Ver lista de compras");
@@ -102,23 +102,23 @@ namespace SingleExperience.Views
             switch (opc)
             {
                 case 0:
-                    homeView.ListProducts(parameters);
+                    homeView.ListProducts();
                     break;
                 case 1:
-                    allBought.Bought(parameters);
+                    allBought.Bought();
                     break;
                 case 2:
                     if (aux.AccessRegister)
                     {
-                        signUp.ListEmployee(parameters);
+                        signUp.ListEmployee();
                     }
                     else
                     {
                         Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                         Console.ReadKey();
-                        Menu(parameters);
+                        Menu();
                     }
-                    signUp.ListEmployee(parameters);
+                    signUp.ListEmployee();
                     break;
                 case 3:
                     Console.Write("\nDigite o código do produto: ");
@@ -141,11 +141,11 @@ namespace SingleExperience.Views
                     }
 
 
-                    Inventory(parameters);
+                    Inventory();
                     break;
                 case 4:
-                    parameters.Session = employeeService.SignOut();
-                    homeView.ListProducts(parameters);
+                    Session = employeeService.SignOut();
+                    homeView.ListProducts();
                     break;
                 case 9:
                     Environment.Exit(0);
@@ -153,12 +153,12 @@ namespace SingleExperience.Views
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Menu(parameters);
+                    Menu();
                     break;
             }
         }
 
-        public void Add(SessionModel parameters)
+        public void Add()
         {
             var validate = true;
 
@@ -268,7 +268,7 @@ namespace SingleExperience.Views
             }
 
             productService.Add(newProduct);
-            Inventory(parameters);
+            Inventory();
         }
     }
 }

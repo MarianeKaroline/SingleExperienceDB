@@ -22,7 +22,7 @@ namespace SingleExperience.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=mariane.santos;Data Source=SERVER");
+            optionsBuilder.UseSqlServer("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=mariane.santos;Data Source=localhost");
         }
     }
 }

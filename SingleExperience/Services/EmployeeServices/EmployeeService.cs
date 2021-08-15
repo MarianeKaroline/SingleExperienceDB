@@ -36,7 +36,7 @@ namespace SingleExperience.Services.EmployeeServices
 
         public bool Register(SignUpModel employee)
         {
-            var existEmployee = GetUser(employee.Cpf);
+            var existEmployee = GetUser();
             if (existEmployee == null)
             {
                 SignUp(employee);

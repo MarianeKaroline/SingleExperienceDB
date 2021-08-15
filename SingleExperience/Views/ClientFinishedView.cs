@@ -10,16 +10,16 @@ using System.Globalization;
 
 namespace SingleExperience.Views
 {
-    class ClientFinishedView
+    class ClientFinishedView : SessionModel
     {
         private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private BoughtService boughtService = new BoughtService(context);
         private CartService cartService = new CartService(context);
 
-        public void ProductsBought(SessionModel parameters, AddBoughtModel addBought)
+        public void ProductsBought(AddBoughtModel addBought)
         {
             ClientHomeView home = new ClientHomeView();
-
+            var j = 51;
             var ids = new List<int>();
 
             addBought.BuyProducts.ForEach(i =>
@@ -29,23 +29,21 @@ namespace SingleExperience.Views
 
             var boughtModel = new BuyModel();
 
-            boughtModel.Session = parameters.Session;
+            boughtModel.Session = Session;
             boughtModel.Method = addBought.Payment;
             boughtModel.Confirmation = addBought.ReferenceCode;
             boughtModel.CreditCardId = addBought.CreditCardId;
             boughtModel.Status = StatusProductEnum.Comprado;
             boughtModel.Ids = ids;
 
-            boughtService.Add(parameters.Session, addBought);
+            boughtService.Add(addBought);
+            var buy = cartService.CallEditStatus(addBought.BuyProducts);
 
-            var buy = cartService.CallEditStatus(addBought.BuyProducts, parameters.Session);
-
-            var j = 51;
 
 
             if (buy)
             {
-                var data = boughtService.PreviewBoughts(parameters, boughtModel, addBought.AddressId);
+                var data = boughtService.PreviewBoughts(boughtModel, addBought.AddressId);
 
                 Console.Clear();
 
@@ -82,13 +80,13 @@ namespace SingleExperience.Views
                     Console.WriteLine($"+{new string('-', j)}+");
                 });
 
-                var total = cartService.Total(parameters);
+                var total = cartService.Total();
 
                 Console.WriteLine($"Total do Pedido: R$ {addBought.TotalPrice}");
                 Console.WriteLine("\nTecle enter para continuar");
                 Console.ReadKey();
-                parameters.CountProduct = 0;
-                home.ListProducts(parameters);
+                CountProduct = 0;
+                home.ListProducts();
             }
         }
     }

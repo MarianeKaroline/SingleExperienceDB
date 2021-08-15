@@ -6,11 +6,11 @@ using System.Text;
 
 namespace SingleExperience.Views
 {
-    class ClientPerfilView
+    class ClientPerfilView : SessionModel
     {
         private AddBoughtModel addBought = new AddBoughtModel();
 
-        public void Menu(List<BoughtModel> boughtModels, SessionModel parameters)
+        public void Menu(List<BoughtModel> boughtModels)
         {
             ClientHomeView homeView = new ClientHomeView();
             ClientBoughtsView boughtsView = new ClientBoughtsView();
@@ -45,16 +45,16 @@ namespace SingleExperience.Views
             switch (opc)
             {
                 case 0:
-                    homeView.ListProducts(parameters);
+                    homeView.ListProducts();
                     break;
                 case 1:
-                    boughtsView.Boughts(boughtModels, parameters);
+                    boughtsView.Boughts(boughtModels);
                     break;
                 case 2:
-                    address.ListAddress(parameters);
+                    address.ListAddress();
                     break;
                 case 3:
-                    card.CreditCard(parameters, addBought, true);
+                    card.CreditCard(addBought, true);
                     break;
                 case 9:
                     Environment.Exit(0);
@@ -62,7 +62,7 @@ namespace SingleExperience.Views
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Menu(boughtModels, parameters);
+                    Menu(boughtModels);
                     break;
             }
         }

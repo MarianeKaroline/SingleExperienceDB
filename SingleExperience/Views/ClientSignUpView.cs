@@ -11,7 +11,7 @@ using SingleExperience.Services.EmployeeServices;
 
 namespace SingleExperience.Views
 {
-    class ClientSignUpView
+    class ClientSignUpView : SessionModel
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private SignUpModel clientModel = new SignUpModel();
@@ -23,7 +23,7 @@ namespace SingleExperience.Views
 
         public string password = null;
 
-        public void SignUp(SessionModel parameters, bool home)
+        public void SignUp(bool home)
         {
             ClientSendingAddressView sendingAddress = new ClientSendingAddressView();
             ClientCartView cartView = new ClientCartView();
@@ -137,25 +137,25 @@ namespace SingleExperience.Views
 
             if (signUp)
             {
-                parameters.Session = clientModel.Cpf;
-                cartService.PassItens(parameters);
-                parameters.CartMemory = new List<ProductCart>();
-                parameters.CountProduct = cartService.Total(parameters).TotalAmount;
+                Session = clientModel.Cpf;
+                cartService.PassItens();
+                Itens = new List<ProductCart>();
+                CountProduct = cartService.Total().TotalAmount;
                 if (home)
                 {
-                    Menu(parameters, home);
+                    Menu(home);
                 }
                 else
                 {
-                    sendingAddress.Address(parameters);
+                    sendingAddress.Address();
                 }
             }
             else
             {
-                parameters.Session = clientService.GetIP();
+                Session = clientService.GetIP();
                 Console.WriteLine("Tecle enter para continuar");
                 Console.ReadKey();
-                cartView.ListCart(parameters);
+                cartView.ListCart();
             }
 
         }
@@ -177,7 +177,7 @@ namespace SingleExperience.Views
             return equal;
         }
 
-        public void Menu(SessionModel parameters, bool home)
+        public void Menu(bool home)
         {
             ClientCartView cart = new ClientCartView();
             ClientHomeView inicio = new ClientHomeView();
@@ -187,7 +187,7 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
-            Console.WriteLine($"2. Ver Carrinho (quantidade: {parameters.CountProduct})");
+            Console.WriteLine($"2. Ver Carrinho (quantidade: {CountProduct})");
             Console.WriteLine("3. Desconectar-se");
             while (invalid)
             {
@@ -206,23 +206,23 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts(parameters);
+                    inicio.ListProducts();
                     break;
                 case 1:
-                    inicio.Search(parameters);
+                    inicio.Search();
                     break;
                 case 2:
-                    cart.ListCart(parameters);
+                    cart.ListCart();
                     break;
                 case 3:
-                    parameters.Session = clientService.SignOut();
-                    parameters.CountProduct = cartService.Total(parameters).TotalAmount;
-                    inicio.ListProducts(parameters);
+                    Session = clientService.SignOut();
+                    CountProduct = cartService.Total().TotalAmount;
+                    inicio.ListProducts();
                     break;
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Menu(parameters, home);
+                    Menu(home);
                     break;
             }
         }
@@ -255,7 +255,7 @@ namespace SingleExperience.Views
             return password;
         }
 
-        public void SignUpEmployee(SessionModel parameters)
+        public void SignUpEmployee()
         {
             ClientSendingAddressView sendingAddress = new ClientSendingAddressView();
             ClientCartView cartView = new ClientCartView();
@@ -400,7 +400,7 @@ namespace SingleExperience.Views
 
             Console.WriteLine("Tecle enter para continuar");
             Console.ReadKey();
-            employeeRegister.ListEmployee(parameters);
+            employeeRegister.ListEmployee();
 
         }
     }

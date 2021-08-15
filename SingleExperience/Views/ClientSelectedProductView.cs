@@ -12,7 +12,7 @@ using SingleExperience.Entities;
 
 namespace SingleExperience.Views
 {
-    class ClientSelectedProductView
+    class ClientSelectedProductView : SessionModel
     {
         private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private ProductService productService = new ProductService(context);
@@ -20,12 +20,12 @@ namespace SingleExperience.Views
         private ClientService clientService = new ClientService(context);
 
         //Listar Produtos
-        public void SelectedProduct(int productId, SessionModel parameters)
+        public void SelectedProduct(int productId)
         {
             Console.Clear();
             var product = productService.SelectedProduct(productId);
             var j = 61;
-            var category = (CategoryEnum)product.CategoryId;
+            var category = product.CategoryId;
 
             Console.WriteLine($"\nInício > Pesquisa > {category} > {product.Name}\n");
 
@@ -49,11 +49,11 @@ namespace SingleExperience.Views
             Console.WriteLine($"+{new string('-', j)}+");
 
 
-            Menu(product, parameters, productId);
+            Menu(product, productId);
         }
 
         //Mostra Menu
-        public void Menu(ProductSelectedModel list, SessionModel parameters, int productId)
+        public void Menu(ProductSelectedModel list, int productId)
         {
             ClientSignInView signIn = new ClientSignInView();
             ClientSignUpView signUp = new ClientSignUpView();
@@ -68,8 +68,8 @@ namespace SingleExperience.Views
             Console.WriteLine("1. Pesquisar por categoria");
             Console.WriteLine($"2. Voltar para a categoria: {category}");
             Console.WriteLine("3. Adicionar produto ao carrinho");
-            Console.WriteLine($"4. Ver Carrinho (Quantidade: {parameters.CountProduct})");
-            if (parameters.Session.Length < 11)
+            Console.WriteLine($"4. Ver Carrinho (Quantidade: {CountProduct})");
+            if (Session.Length < 11)
             {
                 Console.WriteLine("5. Fazer Login");
                 Console.WriteLine("6. Cadastrar-se");
@@ -95,59 +95,57 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts(parameters);
+                    inicio.ListProducts();
                     break;
                 case 1:
-                    inicio.Search(parameters);
+                    inicio.Search();
                     break;
                 case 2:
-                    categoryProduct.Category(list.CategoryId, parameters);
+                    categoryProduct.Category(list.CategoryId);
                     break;
                 case 3:
                     CartModel cartModel = new CartModel();
 
                     cartModel.ProductId = list.ProductId;
-                    cartModel.UserId = parameters.Session;
+                    cartModel.UserId = Session;
                     cartModel.Name = list.Name;
                     cartModel.CategoryId = list.CategoryId;
                     cartModel.StatusId = StatusProductEnum.Ativo;
                     cartModel.Price = list.Price;
 
-                    if (parameters.Session.Length < 11)
+                    if (Session.Length < 11)
                     {
 
-                        parameters.CartMemory = cartService.AddItensMemory(cartModel, parameters.CartMemory);
+                        cartService.AddItensMemory(cartModel);
                     }
                     else
                     {
-                        cartService.AddProduct(parameters, cartModel);
-
-                        parameters.CartMemory = new List<ProductCart>();
+                        cartService.AddProduct(cartModel);
                     }
 
-                    parameters.CountProduct = cartService.Total(parameters).TotalAmount;
+                    CountProduct = cartService.Total().TotalAmount;
 
                     Console.WriteLine("\nProduto adicionado com sucesso (Aperte enter para continuar)");
                     Console.ReadKey();
-                    SelectedProduct(list.ProductId, parameters);
+                    SelectedProduct(list.ProductId);
                     break;
                 case 4:
-                    cartView.ListCart(parameters);
+                    cartView.ListCart();
                     break;
                 case 5:
-                    if (parameters.Session.Length == 11)
+                    if (Session.Length == 11)
                     {
-                        parameters.Session = clientService.SignOut();
-                        parameters.CountProduct = cartService.Total(parameters).TotalAmount;
-                        SelectedProduct(productId, parameters);
+                        Session = clientService.SignOut();
+                        CountProduct = cartService.Total().TotalAmount;
+                        SelectedProduct(productId);
                     }
                     else
                     {
-                        signIn.Login(parameters, true);
+                        signIn.Login(true);
                     }
                     break;
                 case 6:
-                    signUp.SignUp(parameters, true);
+                    signUp.SignUp(true);
                     break;
                 case 9:
                     Environment.Exit(0);

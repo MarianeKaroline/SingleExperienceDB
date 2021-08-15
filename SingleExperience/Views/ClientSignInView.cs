@@ -9,15 +9,15 @@ using System.Collections.Generic;
 
 namespace SingleExperience.Views
 {
-    class ClientSignInView
+    class ClientSignInView : SessionModel
     {
-        private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
+        private static Context.SingleExperience context = new Context.SingleExperience();
         private CartService cartService = new CartService(context);
         private SignInModel signIn = new SignInModel();
         private ClientService ClientService = new ClientService(context);
 
 
-        public void Login(SessionModel parameters, bool home)
+        public void Login(bool home)
         {
             ClientSendingAddressView addressView = new ClientSendingAddressView();
             EmployeePerfilView perfilEmployee = new EmployeePerfilView();
@@ -40,33 +40,33 @@ namespace SingleExperience.Views
                 Console.WriteLine("\nUsuário não existe");
                 Console.WriteLine("Tecle enter para continuar");
                 Console.ReadKey();
-                inicio.ListProducts(parameters);
+                inicio.ListProducts();
             }
 
-            parameters.Session = enjoyer.Cpf;
+            Session = enjoyer.Cpf;
 
             //Verifica se o usuário é funcionário
             if (enjoyer.Employee)
             {
-                perfilEmployee.Menu(parameters);
+                perfilEmployee.Menu();
             }
 
-            cartService.PassItens(parameters);
-            parameters.CartMemory = new List<ProductCart>();
-            parameters.CountProduct = cartService.Total(parameters).TotalAmount;
+            cartService.PassItens();
+            Itens = new List<ProductCart>();
+            CountProduct = cartService.Total().TotalAmount;
 
             //Verifica se página veio da home
             if (home)
             {
-                Menu(parameters, home);
+                Menu(home);
             }
             else
             {
-                addressView.Address(parameters);
+                addressView.Address();
             }
         }
 
-        public void Menu(SessionModel parameters, bool home)
+        public void Menu(bool home)
         {
             ClientHomeView inicio = new ClientHomeView();
             ClientCartView cart = new ClientCartView();
@@ -75,8 +75,8 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
-            Console.WriteLine($"2. Ver Carrinho (quantidade: {parameters.CountProduct})");
-            if (parameters.Session.Length == 11)
+            Console.WriteLine($"2. Ver Carrinho (quantidade: {CountProduct})");
+            if (Session.Length == 11)
             {
                 Console.WriteLine("3. Desconectar-se");
             }
@@ -96,23 +96,23 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts(parameters);
+                    inicio.ListProducts();
                     break;
                 case 1:
-                    inicio.Search(parameters);
+                    inicio.Search();
                     break;
                 case 2:
-                    cart.ListCart(parameters);
+                    cart.ListCart();
                     break;
                 case 3:
-                    parameters.Session = ClientService.SignOut();
-                    parameters.CountProduct = cartService.Total(parameters).TotalAmount;
-                    inicio.ListProducts(parameters);
+                    Session = ClientService.SignOut();
+                    CountProduct = cartService.Total().TotalAmount;
+                    inicio.ListProducts();
                     break;
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Menu(parameters, home);
+                    Menu(home);
                     break;
             }
         }

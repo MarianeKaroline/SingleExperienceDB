@@ -9,9 +9,9 @@ namespace SingleExperience.Services.ProductServices
 {
     public class ProductService
     {
-        protected readonly SingleExperience.Context.SingleExperience context;
+        protected readonly Context.SingleExperience context;
 
-        public ProductService(SingleExperience.Context.SingleExperience context)
+        public ProductService(Context.SingleExperience context)
         {
             this.context = context;
         }
@@ -36,8 +36,8 @@ namespace SingleExperience.Services.ProductServices
         {
             return context.Product
                 .Where(p => p.Available == true)
+                .OrderByDescending(p => p.Ranking)
                 .Take(5)
-                .OrderBy(p => p.Ranking)
                 .Select(i => new BestSellingModel()
                 {
                     ProductId = i.ProductId,

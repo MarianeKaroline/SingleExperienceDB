@@ -9,26 +9,26 @@ using System.Globalization;
 
 namespace SingleExperience.Views
 {
-    class ClientPreviewBoughtView
+    class ClientPreviewBoughtView : SessionModel
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private CartService cartService = new CartService(context);
         private BoughtService boughtService = new BoughtService(context);
 
-        public void Bought(SessionModel parameters, AddBoughtModel addBought)
+        public void Bought(AddBoughtModel addBought)
         {
             var ids = new List<int>();
             var bought = new BuyModel();
 
-            bought.Session = parameters.Session;
+            bought.Session = Session;
             bought.Method = addBought.Payment;
             bought.Confirmation = addBought.ReferenceCode;
             bought.CreditCardId = addBought.CreditCardId;
             bought.Status = StatusProductEnum.Ativo;
             bought.Ids = ids;
 
-            var data = boughtService.PreviewBoughts(parameters, bought, addBought.AddressId);
-            var total = cartService.Total(parameters);
+            var data = boughtService.PreviewBoughts(bought, addBought.AddressId);
+            var total = cartService.Total();
             var listConfirmation = new List<BuyProductModel>();
             var j = 51;
 
@@ -83,15 +83,15 @@ namespace SingleExperience.Views
 
             addBought.TotalPrice = total.TotalPrice;
             addBought.BuyProducts = listConfirmation;
-            Menu(parameters, addBought);
+            Menu(addBought);
         }
 
-        public void Menu(SessionModel parameters, AddBoughtModel addBought)
+        public void Menu(AddBoughtModel addBought)
         {
             ClientFinishedView finished = new ClientFinishedView();
             ClientCartView cartView = new ClientCartView();
 
-            var total = cartService.Total(parameters);
+            var total = cartService.Total();
             var validate = true;
             var op = 0;
 
@@ -118,14 +118,14 @@ namespace SingleExperience.Views
                         i.Status = StatusProductEnum.Comprado;
                     });
 
-                    finished.ProductsBought(parameters, addBought);
+                    finished.ProductsBought(addBought);
                     break;
                 case 2:
-                    cartView.ListCart(parameters);
+                    cartView.ListCart();
                     break;
                 default:
                     Console.WriteLine("Opção inválida, tente novamente");
-                    Menu(parameters, addBought);
+                    Menu(addBought);
                     break;
             }
         }

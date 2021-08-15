@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace SingleExperience.Views
 {
-    class ClientSendingAddressView
+    class ClientSendingAddressView : SessionModel
     {
         private static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private CartService cartService = new CartService(context);
@@ -18,7 +18,7 @@ namespace SingleExperience.Views
         private ClientService clientService = new ClientService(context);
         private AddressModel addressModel = new AddressModel();
 
-        public void ListAddress(SessionModel parameters)
+        public void ListAddress()
         {
             var opc = '\0';
             var validate = true;
@@ -28,9 +28,9 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\nSua conta > Seus endereços cadastrados\n");
 
-            if (clientService.HasAddress(parameters.Session))
+            if (clientService.HasAddress(Session))
             {
-                clientService.ShowAddress(parameters.Session)
+                clientService.ShowAddress(Session)
                     .ForEach(p =>
                     {
                         Console.WriteLine($"+{new string('-', j)}+");
@@ -61,10 +61,10 @@ namespace SingleExperience.Views
                 switch (opc)
                 {
                     case 's':
-                        AddNewAddress(parameters, true);
+                        AddNewAddress(true);
                         break;
                     case 'n':
-                        Menu(parameters);
+                        Menu();
                         break;
                     default:
                         break;
@@ -76,7 +76,7 @@ namespace SingleExperience.Views
             }
         }
 
-        public void Address(SessionModel parameters)
+        public void Address()
         {
             ClientPaymentMethodView paymentMethod = new ClientPaymentMethodView();
             ClientHomeView home = new ClientHomeView();
@@ -90,10 +90,10 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\nCarrinho > Informações pessoais > Endereço\n");
 
-            if (clientService.HasAddress(parameters.Session))
+            if (clientService.HasAddress(Session))
             {
                 Console.WriteLine($"Endereços cadastrados");
-                clientService.ShowAddress(parameters.Session)
+                clientService.ShowAddress(Session)
                     .ForEach(p =>
                     {
                         Console.WriteLine($"+{new string('-', j)}+");
@@ -143,26 +143,26 @@ namespace SingleExperience.Views
                         }
                         addBought.AddressId = op;
 
-                        paymentMethod.Methods(parameters, addBought);
+                        paymentMethod.Methods(addBought);
 
                         break;
                     case 'n':
-                        AddNewAddress(parameters, false);
+                        AddNewAddress(false);
                         break;
                     default:
                         Console.WriteLine("\nEssa opção não existe. Tente novamente. (Tecle enter para continuar)\n");
                         Console.ReadKey();
-                        Address(parameters);
+                        Address();
                         break;
                 }
             }
             else
             {
-                AddNewAddress(parameters, false);
+                AddNewAddress(false);
             }
         }
 
-        public void AddNewAddress(SessionModel parameters, bool home)
+        public void AddNewAddress(bool home)
         {
             ClientPaymentMethodView paymentMethod = new ClientPaymentMethodView();
             ClientHomeView inicio = new ClientHomeView();
@@ -226,7 +226,7 @@ namespace SingleExperience.Views
             addressModel.City = Console.ReadLine();
             Console.Write("Estado: ");
             addressModel.State = Console.ReadLine();
-            addressModel.Cpf = parameters.Session;
+            addressModel.Cpf = Session;
 
             var addressId = clientService.AddAddress(addressModel);
             addBought.AddressId = addressId;
@@ -234,15 +234,15 @@ namespace SingleExperience.Views
 
             if (home)
             {
-                ListAddress(parameters);
+                ListAddress();
             }
             else
             {
-                paymentMethod.Methods(parameters, addBought);
+                paymentMethod.Methods(addBought);
             }
         }
 
-        public void Menu(SessionModel parameters)
+        public void Menu()
         {
             ClientHomeView inicio = new ClientHomeView();
             ClientCartView cartView = new ClientCartView();
@@ -252,7 +252,7 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\n0. Precisa de ajuda?");
             Console.WriteLine("1. Voltar para o início");
-            Console.WriteLine($"2. Ver Carrinho (Quantidade: {parameters.CountProduct})");
+            Console.WriteLine($"2. Ver Carrinho (Quantidade: {CountProduct})");
             Console.WriteLine("3. Desconectar-se");
             Console.WriteLine("9. Sair do Sistema");
             while (invalid)
@@ -280,18 +280,18 @@ namespace SingleExperience.Views
                     Console.WriteLine("Tecle enter para continuar");
                     Console.ReadLine();
 
-                    inicio.ListProducts(parameters);
+                    inicio.ListProducts();
                     break;
                 case 1:
-                    inicio.ListProducts(parameters);
+                    inicio.ListProducts();
                     break;
                 case 2:
-                    cartView.ListCart(parameters);
+                    cartView.ListCart();
                     break;
                 case 3:
-                    parameters.Session = clientService.SignOut();
-                    parameters.CountProduct = cartService.Total(parameters).TotalAmount;
-                    inicio.ListProducts(parameters);
+                    Session = clientService.SignOut();
+                    CountProduct = cartService.Total().TotalAmount;
+                    inicio.ListProducts();
                     break;
                 case 9:
                     Environment.Exit(0);
@@ -299,7 +299,7 @@ namespace SingleExperience.Views
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Menu(parameters);
+                    Menu();
                     break;
             }
         }

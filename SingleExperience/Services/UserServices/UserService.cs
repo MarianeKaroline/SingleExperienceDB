@@ -1,20 +1,21 @@
 ﻿using SingleExperience.Entities;
+using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ClientServices.Models;
+using SingleExperience.Services.UserSevices.Models;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
 namespace SingleExperience.Services.UserServices
 {
-    public class UserService
+    public class UserService : SessionModel
     {
-        protected readonly SingleExperience.Context.SingleExperience context;
+        protected readonly Context.SingleExperience context;
 
-        public UserService(SingleExperience.Context.SingleExperience context)
+        public UserService(Context.SingleExperience context)
         {
             this.context = context;
         }
-
 
         public string GetIP()
         {
@@ -31,10 +32,10 @@ namespace SingleExperience.Services.UserServices
             return session;
         }
 
-        public User SignIn(SignInModel signIn)
+        public UserModel SignIn(SignInModel signIn)
         {
-            var client = GetUser(signIn.Email);
-            User session = null;
+            var client = GetUserEmail(signIn.Email);
+            UserModel session = null;
 
             if (client != null)
             {
@@ -53,10 +54,24 @@ namespace SingleExperience.Services.UserServices
             return GetIP();
         }
 
-        public User GetUser(string cpf)
+        public User GetUser()
         {
             return context.Enjoyer
-                .FirstOrDefault(i => i.Cpf == cpf);
+                .FirstOrDefault(i => i.Cpf == Session);
+        }
+
+        public UserModel GetUserEmail(string email)
+        {
+            return context.Enjoyer
+                .Where(i => i.Email == email)
+                .Select(i => new UserModel()
+                {
+                    Email = i.Email,
+                    Cpf = i.Cpf,
+                    Password = i.Password,
+                    Employee = i.Employee
+                })
+                .FirstOrDefault();
         }
 
         public void SignUp(SignUpModel enjoyer)

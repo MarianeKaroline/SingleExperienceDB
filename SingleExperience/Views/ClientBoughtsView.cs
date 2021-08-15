@@ -8,12 +8,12 @@ using System.Text;
 
 namespace SingleExperience.Views
 {
-    class ClientBoughtsView
+    class ClientBoughtsView : SessionModel
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private BoughtService boughtService = new BoughtService(context);
 
-        public void Boughts(List<BoughtModel> boughtModels, SessionModel parameters)
+        public void Boughts(List<BoughtModel> boughtModels)
         {
             int j = 71;
 
@@ -50,10 +50,10 @@ namespace SingleExperience.Views
                 }
             });
 
-            Menu(boughtModels, parameters);
+            Menu(boughtModels);
         }
 
-        public void Menu(List<BoughtModel> boughtModels, SessionModel parameters)
+        public void Menu(List<BoughtModel> boughtModels)
         {
             ClientHomeView homeView = new ClientHomeView();
             ClientPerfilView perfilView = new ClientPerfilView();
@@ -94,23 +94,23 @@ namespace SingleExperience.Views
 
             if (opc == 0)
             {
-                homeView.ListProducts(parameters);
+                homeView.ListProducts();
             }
             else if (opc == 100)
             {
-                perfilView.Menu(boughtModels, parameters);
+                perfilView.Menu(boughtModels);
             }
             else
             {
                 if (boughtService.HasBought(opc))
                 {
-                    productsBoughtView.ProductsBought(boughtModels, parameters, opc);
+                    productsBoughtView.ProductsBought(boughtModels, opc);
                 }
                 else
                 {
                     Console.WriteLine("Opção inválida, tente novamente.");
                     Console.WriteLine("\nTente novamente");
-                    Menu(boughtModels, parameters);
+                    Menu(boughtModels);
                 }
             }
         }

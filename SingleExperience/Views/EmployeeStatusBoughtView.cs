@@ -12,14 +12,14 @@ using System.Text;
 
 namespace SingleExperience.Views
 {
-    class EmployeeStatusBoughtView
+    class EmployeeStatusBoughtView : SessionModel
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private BoughtService boughtService = new BoughtService(context);
         private EmployeeService employeeService = new EmployeeService(context);
         private ProductService productService = new ProductService(context);
 
-        public void Bought(SessionModel parameters, StatusBoughtEnum status)
+        public void Bought(StatusBoughtEnum status)
         {
             int j = 51;
 
@@ -46,12 +46,12 @@ namespace SingleExperience.Views
                 Console.WriteLine($"|Forma de pagamento{new string(' ', j - $"Forma de pagamento".Length)}|");
                 Console.WriteLine($"|{new string(' ', j)}|");
 
-                if (i.paymentMethod == PaymentEnum.CreditCard)
+                if (i.PaymentMethod == PaymentEnum.CreditCard)
                     Console.WriteLine($"|(Crédito) com final {i.NumberCard.Substring(12)}{new string(' ', j - $"(Crédito) com final {i.NumberCard.Substring(12)}".Length)}|");
-                else if (i.paymentMethod == PaymentEnum.BankSlip)
-                    Console.WriteLine($"|(Boleto) {i.Code}{new string(' ', j - $"(Boleto) {i.Code}".Length)}|");
+                else if (i.PaymentMethod == PaymentEnum.BankSlip)
+                    Console.WriteLine($"|(Boleto){new string(' ', j - $"(Boleto)".Length)}|");
                 else
-                    Console.WriteLine($"|(PIX) {i.Pix}{new string(' ', j - $"(PIX) {i.Pix}".Length)}|");
+                    Console.WriteLine($"|(PIX){new string(' ', j - $"(PIX)".Length)}|");
 
                 Console.WriteLine($"|{new string(' ', j)}|");
 
@@ -75,10 +75,10 @@ namespace SingleExperience.Views
                 });
             });
 
-            Menu(parameters, boughtService.BoughtPendent(StatusBoughtEnum.ConfirmacaoPendente), status);
+            Menu(boughtService.BoughtPendent(StatusBoughtEnum.ConfirmacaoPendente), status);
         }
 
-        public void Menu(SessionModel parameters, List<BoughtModel> list, StatusBoughtEnum status)
+        public void Menu(List<BoughtModel> list, StatusBoughtEnum status)
         {
             ClientHomeView homeView = new ClientHomeView();
             EmployeeListAllBoughtView listAllBought = new EmployeeListAllBoughtView();
@@ -114,14 +114,14 @@ namespace SingleExperience.Views
             switch (opc)
             {
                 case 0:
-                    homeView.ListProducts(parameters);
+                    homeView.ListProducts();
                     break;
                 case 100:
-                    listAllBought.Bought(parameters);
+                    listAllBought.Bought();
                     break;
                 case 101:
-                    parameters.Session = employeeService.SignOut();
-                    homeView.ListProducts(parameters);
+                    Session = employeeService.SignOut();
+                    homeView.ListProducts();
                     break;
                 case 102:
                     Console.Write("\nDigite o código da compra que deseja confirmar: ");
@@ -145,7 +145,7 @@ namespace SingleExperience.Views
                             Console.ReadKey();
                         }
 
-                        Bought(parameters, status);
+                        Bought(status);
                     }
                     break;
                 case 103:
@@ -170,7 +170,7 @@ namespace SingleExperience.Views
                             Console.ReadKey();
                         }
 
-                        Bought(parameters, status);
+                        Bought(status);
                     }
                     break;
                 case 9:
@@ -179,7 +179,7 @@ namespace SingleExperience.Views
                 default:
                     Console.WriteLine("Opção inválida, tente novamente.");
                     Console.WriteLine("\nTente novamente");
-                    Menu(parameters, list, status);
+                    Menu(list, status);
                     break;
             }
         }

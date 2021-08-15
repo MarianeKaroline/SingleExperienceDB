@@ -9,14 +9,14 @@ using SingleExperience.Services.EmployeeServices;
 
 namespace SingleExperience.Views
 {
-    class EmployeeListAllBoughtView
+    class EmployeeListAllBoughtView : SessionModel
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private EmployeeStatusBoughtView productStatus = new EmployeeStatusBoughtView();
         private EmployeeService employeeService = new EmployeeService(context);
         private BoughtService boughtService = new BoughtService(context);
 
-        public void Bought(SessionModel parameters)
+        public void Bought()
         {
             int j = 51;
 
@@ -42,12 +42,12 @@ namespace SingleExperience.Views
                 Console.WriteLine($"|Forma de pagamento{new string(' ', j - $"Forma de pagamento".Length)}|");
                 Console.WriteLine($"|{new string(' ', j)}|");
 
-                if (i.paymentMethod == PaymentEnum.CreditCard)
+                if (i.PaymentMethod == PaymentEnum.CreditCard)
                     Console.WriteLine($"|(Crédito) com final {i.NumberCard.Substring(12)}{new string(' ', j - $"(Crédito) com final {i.NumberCard.Substring(12)}".Length)}|");
-                else if (i.paymentMethod == PaymentEnum.BankSlip)
-                    Console.WriteLine($"|(Boleto) {i.Code}{new string(' ', j - $"(Boleto) {i.Code}".Length)}|");
+                else if (i.PaymentMethod == PaymentEnum.BankSlip)
+                    Console.WriteLine($"|(Boleto){new string(' ', j - $"(Boleto)".Length)}|");
                 else
-                    Console.WriteLine($"|(PIX) {i.Pix}{new string(' ', j - $"(PIX) {i.Pix}".Length)}|");
+                    Console.WriteLine($"|(PIX){new string(' ', j - $"(PIX)".Length)}|");
 
                 Console.WriteLine($"|{new string(' ', j)}|");
 
@@ -70,10 +70,10 @@ namespace SingleExperience.Views
                     Console.WriteLine($"+{new string('-', j)}+");
                 });
             });
-            Menu(parameters);
+            Menu();
         }
 
-        public void Menu(SessionModel parameters)
+        public void Menu()
         {
             ClientHomeView homeView = new ClientHomeView();
 
@@ -102,20 +102,20 @@ namespace SingleExperience.Views
             switch (opc)
             {
                 case 0:
-                    homeView.ListProducts(parameters);
+                    homeView.ListProducts();
                     break;
                 case 1:
-                    productStatus.Bought(parameters, StatusBoughtEnum.ConfirmacaoPendente);
+                    productStatus.Bought(StatusBoughtEnum.ConfirmacaoPendente);
                     break;
                 case 2:
-                    productStatus.Bought(parameters, StatusBoughtEnum.PagamentoPendente);
+                    productStatus.Bought(StatusBoughtEnum.PagamentoPendente);
                     break;
                 case 3:
-                    productStatus.Bought(parameters, StatusBoughtEnum.Cancelado);
+                    productStatus.Bought(StatusBoughtEnum.Cancelado);
                     break;
                 case 4:
-                    parameters.Session = employeeService.SignOut();
-                    homeView.ListProducts(parameters);
+                    Session = employeeService.SignOut();
+                    homeView.ListProducts();
                     break;
                 case 9:
                     Environment.Exit(0);
@@ -123,7 +123,7 @@ namespace SingleExperience.Views
                 default:
                     Console.WriteLine("Opção inválida, tente novamente.");
                     Console.WriteLine("\nTente novamente");
-                    Menu(parameters);
+                    Menu();
                     break;
             }
         }

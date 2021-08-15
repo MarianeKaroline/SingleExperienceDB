@@ -4,12 +4,12 @@ using System;
 
 namespace SingleExperience.Views
 {
-    class EmployeePerfilView
+    class EmployeePerfilView : SessionModel
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
         private EmployeeService employeeService = new EmployeeService(context);
 
-        public void Menu(SessionModel parameters)
+        public void Menu()
         {
             EmployeeInventoryView employeeInventory = new EmployeeInventoryView();
             EmployeeListAllBoughtView allBought = new EmployeeListAllBoughtView();
@@ -19,7 +19,7 @@ namespace SingleExperience.Views
             bool validate = true;
             int opc = 0;
 
-            var aux = employeeService.Access(parameters.Session);
+            var aux = employeeService.Access(Session);
 
             Console.Clear();
 
@@ -53,40 +53,40 @@ namespace SingleExperience.Views
             switch (opc)
             {
                 case 0:
-                    homeView.ListProducts(parameters);
+                    homeView.ListProducts();
                     break;
                 case 1:
-                    allBought.Bought(parameters);
+                    allBought.Bought();
                     break;
                 case 2:
                     if (aux.AccessRegister)
                     {
-                        signUp.ListEmployee(parameters);
+                        signUp.ListEmployee();
                     }
                     else
                     {
                         Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                         Console.ReadKey();
-                        Menu(parameters);
+                        Menu();
                     }
                     break;
 
                 case 3:
                     if (aux.AccessInventory)
                     {
-                        employeeInventory.Inventory(parameters);
+                        employeeInventory.Inventory();
                     }
                     else
                     {
                         Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                         Console.ReadKey();
-                        Menu(parameters);
+                        Menu();
                     }
                     break;
 
                 case 4:
-                    parameters.Session = employeeService.SignOut();
-                    homeView.ListProducts(parameters);
+                    Session = employeeService.SignOut();
+                    homeView.ListProducts();
                     break;
                 case 9:
                     Environment.Exit(0);
@@ -94,7 +94,7 @@ namespace SingleExperience.Views
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Menu(parameters);
+                    Menu();
                     break;
             }
         }
