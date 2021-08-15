@@ -2,6 +2,7 @@
 using SingleExperience.Enums;
 using SingleExperience.Services.BoughtServices.Models;
 using SingleExperience.Services.CartServices.Models;
+using SingleExperience.Services.ProductServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,9 @@ namespace SingleExperience.Views
 {
     class ClientProductsBoughtView : SessionModel
     {
+        static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
+        private ProductService productService = new ProductService(context);
+
         public void ProductsBought(List<BoughtModel> boughtModels, int boughtId)
         {
             int j = 51;
@@ -61,6 +65,7 @@ namespace SingleExperience.Views
                     i.Itens.ForEach(k =>
                     {
                         Console.WriteLine($"|{new string(' ', j)}|");
+                        Console.WriteLine($"|#{k.ProductId}{new string(' ', j - $"#{k.ProductId}".Length)}|"); 
                         Console.WriteLine($"|{k.ProductName}{new string(' ', j - k.ProductName.Length)}|"); 
                         Console.WriteLine($"|Qtde: {k.Amount}{new string(' ', j - $"Qtde: {k.Amount}".Length)}|");
                         Console.WriteLine($"|R${k.Price}{new string(' ', j - $"R${k.Price}".Length)}|");
@@ -68,9 +73,9 @@ namespace SingleExperience.Views
                         Console.WriteLine($"+{new string('-', j)}+");
                     });
                 });
-            Menu(boughtModels);
+            Menu(boughtModels, boughtId);
         }
-        public void Menu(List<BoughtModel> boughtModels)
+        public void Menu(List<BoughtModel> boughtModels, int boughtId)
         {
             var homeView = new ClientHomeView();
             var perfilView = new ClientPerfilView();
@@ -79,6 +84,7 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\n\n0. Voltar para o início");
             Console.WriteLine("1. Voltar para sua conta");
+            Console.WriteLine("2. Avaliar pedido");
             Console.WriteLine("9. Sair do programa");
             while (validate)
             {
@@ -91,6 +97,31 @@ namespace SingleExperience.Views
                 {
                     Console.WriteLine("Opção inválida, tente novamente.");
                 }
+            }
+
+            switch (opc)
+            {
+                case 0:
+                    homeView.ListProducts();
+                    break;
+                case 1:
+                    perfilView.Menu(boughtModels);
+                    break;
+                case 2:
+                    Console.Write("\nDigite o código do produto: ");
+                    var productId = int.Parse(Console.ReadLine());
+
+                    Console.Write("Digite sua avaliação: (1 - 5)");
+                    var rating = decimal.Parse(Console.ReadLine());
+
+                    productService.Rating(productId, rating);
+
+                    Console.WriteLine("Produto avaliado com sucesso. (Tecle enter para continuar)");
+                    Console.ReadKey();
+                    ProductsBought(boughtModels, boughtId);
+                    break;
+                default:
+                    break;
             }
 
             if (opc == 0)

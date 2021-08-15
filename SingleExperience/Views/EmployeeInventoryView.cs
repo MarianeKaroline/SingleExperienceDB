@@ -10,9 +10,9 @@ namespace SingleExperience.Views
     class EmployeeInventoryView : SessionModel
     {
         static SingleExperience.Context.SingleExperience context = new SingleExperience.Context.SingleExperience();
+        private ProductService productService = new ProductService(context);
         private EmployeeService employeeService = new EmployeeService(context);
         private AddNewProductModel newProduct = new AddNewProductModel();
-        private ProductService productService = new ProductService(context);
 
         public void Inventory()
         {

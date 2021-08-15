@@ -70,11 +70,7 @@ namespace SingleExperience.Views
 
             var aux = employeeService.Access(Session);
 
-            Console.Clear();
-
-            Console.WriteLine("\nAdministrador\n");
-
-            Console.WriteLine("0. Voltar para o início");
+            Console.WriteLine("\n\n0. Voltar para o início");
             Console.WriteLine("1. Ver lista de compras");
 
             if (aux.AccessInventory)

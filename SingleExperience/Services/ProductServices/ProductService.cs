@@ -94,7 +94,8 @@ namespace SingleExperience.Services.ProductServices
                     .Where(i => i.ProductId == j.ProductId)
                     .FirstOrDefault();
 
-                product.Amount = j.Amount;
+                product.Amount -= j.Amount;
+                product.Ranking += j.Amount;
 
                 context.Product.Update(product);
                 context.SaveChanges();
@@ -131,6 +132,16 @@ namespace SingleExperience.Services.ProductServices
             };
 
             context.Product.Add(model);
+            context.SaveChanges();
+        }
+
+        public void Rating(int productId, decimal rating)
+        {
+            var product = context.Product.FirstOrDefault(i => i.ProductId == productId);
+
+            product.Rating += rating;
+
+            context.Product.Update(product);
             context.SaveChanges();
         }
     }

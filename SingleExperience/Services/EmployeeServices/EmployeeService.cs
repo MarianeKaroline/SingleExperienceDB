@@ -64,8 +64,8 @@ namespace SingleExperience.Services.EmployeeServices
                          Cpf = i.Cpf,
                          FullName = i.Name,
                          Email = i.Email,
-                         AccessInventory = Access(i.Cpf).AccessInventory,
-                         RegisterEmployee = Access(i.Cpf).AccessRegister
+                         AccessInventory = context.AccessEmployee.FirstOrDefault(j => j.Cpf == i.Cpf).AccessInventory,
+                         RegisterEmployee = context.AccessEmployee.FirstOrDefault(j => j.Cpf == i.Cpf).AccessRegister
                      })
                      .ToList();
         }

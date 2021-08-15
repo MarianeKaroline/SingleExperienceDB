@@ -72,12 +72,8 @@ namespace SingleExperience.Views
             });
 
             Console.WriteLine("\n\n0. Voltar para o início");
-            Console.WriteLine("100. Voltar para sua conta");
-
-            if (aux == 0)
-            {
-                Console.WriteLine("\nDigite o número do pedido\n");
-            }
+            Console.WriteLine("1. Voltar para sua conta");
+            Console.WriteLine("2. Ver detalhes da compra");
 
             while (validate)
             {
@@ -92,26 +88,34 @@ namespace SingleExperience.Views
                 }
             }
 
-            if (opc == 0)
+            switch (opc)
             {
-                homeView.ListProducts();
-            }
-            else if (opc == 100)
-            {
-                perfilView.Menu(boughtModels);
-            }
-            else
-            {
-                if (boughtService.HasBought(opc))
-                {
-                    productsBoughtView.ProductsBought(boughtModels, opc);
-                }
-                else
-                {
+                case 0:
+                    homeView.ListProducts();
+                    break;
+                case 1:
+                    perfilView.Menu(boughtModels);
+                    break;
+                case 2:
+                    Console.WriteLine("\nDigite o número do perido\n");
+                    var op = int.Parse(Console.ReadLine());
+
+                    if (boughtService.HasBought(op))
+                    {
+                        productsBoughtView.ProductsBought(boughtModels, op);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Opção inválida, tente novamente.");
+                        Console.WriteLine("\nTente novamente");
+                        Menu(boughtModels);
+                    }
+                    break;
+                default:
                     Console.WriteLine("Opção inválida, tente novamente.");
                     Console.WriteLine("\nTente novamente");
                     Menu(boughtModels);
-                }
+                    break;
             }
         }
     }

@@ -182,9 +182,10 @@ namespace SingleExperience.Views
                                 invalidCodeRemove = false;
                             }
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
                             Console.WriteLine("Opção inválida, tente novamente.");
+                            Console.WriteLine(e);
                         }
                     }
 

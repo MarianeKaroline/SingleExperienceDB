@@ -75,7 +75,7 @@ namespace SingleExperience.Views
                 });
             });
 
-            Menu(boughtService.BoughtPendent(StatusBoughtEnum.ConfirmacaoPendente), status);
+            Menu(boughtService.BoughtPendent(status), status);
         }
 
         public void Menu(List<BoughtModel> list, StatusBoughtEnum status)

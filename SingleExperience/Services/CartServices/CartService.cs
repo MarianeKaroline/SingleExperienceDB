@@ -224,24 +224,11 @@ namespace SingleExperience.Services.CartServices
 
             }
 
-        }
-
-
-        public void EditItem(int productId, StatusProductEnum status, int sub)
-        {
-            var getItem = ListItens(Get().CartId).FirstOrDefault(i => i.ProductId == productId);
-
-            getItem.Amount = sub;
-            getItem.StatusProductEnum = status;
-
-            context.ProductCart.Update(getItem);
-            context.SaveChanges();
-        }
-        
+        }        
 
         public void EditStatusProduct(int productId, StatusProductEnum status)
         {
-            var getItem = ListItens(Get().CartId).FirstOrDefault(i => i.ProductId == productId);
+            var getItem = context.ProductCart.FirstOrDefault(i => i.ProductId == productId && Get().CartId == i.CartId);
             var auxAmount = 0;
 
             if (status == StatusProductEnum.Ativo)
@@ -259,7 +246,7 @@ namespace SingleExperience.Services.CartServices
         
         public void EditAmount(int productId, int sub)
         {
-            var getItem = ListItens(Get().CartId).FirstOrDefault(i => i.ProductId == productId);
+            var getItem = context.ProductCart.FirstOrDefault(i => i.ProductId == productId && Get().CartId == i.CartId);
             var lines = new List<string>();
 
             getItem.Amount = sub;
@@ -348,7 +335,8 @@ namespace SingleExperience.Services.CartServices
                     {
                         if (j.ProductId == i.ProductId && j.StatusProductEnum != StatusProductEnum.Ativo)
                         {
-                            EditItem(j.ProductId, StatusProductEnum.Ativo, i.Amount);
+                            EditStatusProduct(j.ProductId, StatusProductEnum.Ativo);
+                            EditAmount(j.ProductId, i.Amount);
                             exist = true;
                         }
                         else if (j.ProductId == i.ProductId)
